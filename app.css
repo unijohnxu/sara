@@ -15,8 +15,7 @@ input[type="submit"],
 #input {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    justify-content: center;
 }
 
 #input h2 {
@@ -36,7 +35,7 @@ input[type="submit"],
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: left;
+    flex-wrap: wrap;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -45,15 +44,16 @@ input[type="submit"],
     z-index: 1000;
 }
 
-.label {
-    margin-right: 0.5em;
+.mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 5px 0 5px;
 }
 
 .mode-logo {
     position: relative;
-    text-align: center;
     color: white;
-    margin-right: 0.25em;
     border: 2px solid transparent; /* Transparent border for inactive state */
     max-height: 2em;
     max-width: 2em;
@@ -78,12 +78,18 @@ input[type="submit"],
     pointer-events: none;
 }
 
+.mode-logo-image,
+.mode-logo-text {
+    display: block;
+    margin: 0 auto;
+}
+
 .zoom-controls {
     position: fixed;
     bottom: 10px;
     right: 10px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     background-color: white;
     border: 1px solid #ccc;
@@ -184,45 +190,15 @@ input[type="submit"],
 }
 
 /* For smaller screens */
-@media (max-width: 580px) {
-    .mode-logo-image {
-        font-size: 0.75em;
-    }
-    .mode-logo-text {
-        font-size: 0.75em;
-    }
-    .label {
-        font-size: 0.75em;
-    }
-}
-
-@media (max-width: 500px) {
-    .mode-logo-image {
-        font-size: 0.57em;
-    }
-    .mode-logo-text {
-        font-size: 0.8em;
-    }
-    .label {
-        font-size: 0.57em;
-    }
-
-    .zoom-button {
-        width: 30px;
-        height: 30px;
-        font-size: 1em;
-    }
-}
-
 @media (max-width: 430px) {
     .mode-logo-image {
-        font-size: 0.5em;
+        font-size: 0.7em;
     }
     .mode-logo-text {
         font-size: 0.9em;
     }
     .label {
-        font-size: 0.5em;
+        font-size: 0.7em;
     }
     .zoom-button {
         width: 30px;
