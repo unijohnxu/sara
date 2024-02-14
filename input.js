@@ -8,7 +8,7 @@ document.getElementById("saveData").addEventListener("click", function () {
         // Save to localStorage
         localStorage.setItem("gridData", JSON.stringify(parsedData));
         // Redirect to app.html
-        window.location.href = "app.html";
+        window.location.href = "index.html";
     } catch (error) {
         alert("Invalid JSON data.");
     }
