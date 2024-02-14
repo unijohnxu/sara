@@ -173,7 +173,7 @@
 
 /* For smaller screens */
 @media (max-width: 580px) {
-    .mode-logo {
+    .mode-logo-image {
         font-size: 0.75em;
     }
     .mode-logo-text {
@@ -185,7 +185,7 @@
 }
 
 @media (max-width: 470px) {
-    .mode-logo {
+    .mode-logo-image {
         font-size: 0.57em;
     }
     .mode-logo-text {
@@ -203,7 +203,7 @@
 }
 
 @media (max-width: 360px) {
-    .mode-logo {
+    .mode-logo-image {
         font-size: 0.5em;
     }
     .mode-logo-text {
