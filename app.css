@@ -46,6 +46,7 @@
     margin-right: 0.25em;
     border: 2px solid transparent; /* Transparent border for inactive state */
     height: 2em;
+    width: 2em;
 }
 
 .mode-logo.active-mode {
@@ -55,7 +56,7 @@
 
 .mode-logo-image {
     height: 100%;
-    width: auto;
+    width: 100%;
     padding: 0.1em;
 }
 
