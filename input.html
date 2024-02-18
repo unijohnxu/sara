@@ -34,9 +34,6 @@
                             <a class="nav-link" href="input.html">Input Data</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Scan New Room</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="#">Choose Ready Rooms</a>
                         </li>
                     </ul>
@@ -56,15 +53,9 @@
                 </div>
             </form>
 
-            <h2>JSON</h2>
-            <textarea
-                id="jsonData"
-                rows="10"
-                cols="30"
-                placeholder="Paste JSON data here"
-            ></textarea>
-            <br />
-            <button id="saveData">Generate Grid</button>
+            <h2>Upload PGM</h2>
+            <input type="file" id="fileInput" />
+            <button id="uploadData">Generate Grid</button>
         </div>
 
         <script src="input.js"></script>
