@@ -51,6 +51,10 @@ function handlePlaceMode(gridItem) {
         ).textContent; // e.g., "S1"
         const cNumber = getLowestAvailableCNumber(stackText); // Get the lowest available C number for this stack
 
+        if (cNumber === null) {
+            return; // Stop if the limit is reached
+        }
+
         const container = document.createElement("div");
         container.className = "chair-container-in-grid"; // contains both image and text
 
@@ -76,14 +80,14 @@ function handlePlaceMode(gridItem) {
         // Selecting or deselecting a stack
         if (selectedStack === gridItem) {
             // Deselect if the same stack is clicked again
-            selectedStack.classList.remove("selected-in-grid");
+            selectedStack.classList.remove("highlighted-stack");
             selectedStack = null;
         } else {
             // Select a new stack
             if (selectedStack)
-                selectedStack.classList.remove("selected-in-grid");
+                selectedStack.classList.remove("highlighted-stack");
             selectedStack = gridItem;
-            gridItem.classList.add("selected-in-grid");
+            gridItem.classList.add("highlighted-stack");
         }
     }
 }
@@ -115,7 +119,6 @@ function deleteChair(gridItem) {
         // Deleting a stack, remove it along with all associated C chairs
         const stackId = chairTextContent; // e.g., "S1"
         gridItem.removeChild(chairContainer); // Remove the S chair
-        allocatedNumbers.delete(parseInt(stackId.slice(1))); // Remove from allocatedNumbers
 
         // Remove all C chairs associated with this stack
         document
@@ -135,19 +138,84 @@ function deleteChair(gridItem) {
 
         // Clear allocated C numbers for this stack
         if (allocatedCNumbersByStack[stackId]) {
-            allocatedCNumbersByStack[stackId].clear();
             delete allocatedCNumbersByStack[stackId];
         }
+
+        const stackNumber = parseInt(stackId.substring(1));
+
+        document
+            .querySelectorAll(".chair-text-in-grid")
+            .forEach((chairText) => {
+                const isStack = chairText.textContent.startsWith("S");
+                const isCChair = chairText.textContent.startsWith("C");
+                let currentNumber;
+
+                if (isStack) {
+                    currentNumber = parseInt(
+                        chairText.textContent.substring(1)
+                    );
+                } else if (isCChair) {
+                    currentNumber = parseInt(
+                        chairText.textContent.match(/\(S(\d+)\)/)[1]
+                    );
+                }
+
+                // Renumber stacks
+                if (currentNumber > stackNumber) {
+                    const newNumber = currentNumber - 1;
+                    const newText = isStack
+                        ? `S${newNumber}`
+                        : chairText.textContent.replace(
+                              `S${currentNumber}`,
+                              `S${newNumber}`
+                          );
+                    chairText.textContent = newText;
+
+                    // Update allocatedCNumbersByStack for C chairs
+                    if (isCChair) {
+                        if (
+                            allocatedCNumbersByStack[`S${newNumber}`] ===
+                            undefined
+                        ) {
+                            allocatedCNumbersByStack[`S${newNumber}`] =
+                                allocatedCNumbersByStack[`S${currentNumber}`];
+                            delete allocatedCNumbersByStack[
+                                `S${currentNumber}`
+                            ];
+                        }
+                    }
+                }
+            });
+
+        // Update allocatedNumbers set
+        allocatedNumbers.delete(stackNumber);
+        const updatedNumbers = new Set(
+            [...allocatedNumbers].map((num) =>
+                num > stackNumber ? num - 1 : num
+            )
+        );
+        allocatedNumbers.clear();
+        updatedNumbers.forEach((num) => allocatedNumbers.add(num));
     } else if (chairTextContent.startsWith("C")) {
         // Deleting a C chair, remove it individually
         // Parse the stack ID and C number from the chair's text
         const match = chairTextContent.match(/C(\d+) \(S(\d+)\)/);
         if (match) {
-            const cNum = parseInt(match[1]);
             const stackId = `S${match[2]}`;
-            // Delete the C chair and update the allocated numbers
-            allocatedCNumbersByStack[stackId]?.delete(cNum);
             gridItem.removeChild(chairContainer);
+            // Decrement the count since we're removing a C chair
+            if (allocatedCNumbersByStack[stackId] > 0) {
+                allocatedCNumbersByStack[stackId]--;
+            }
+
+            let currentNumber = 1;
+            document
+                .querySelectorAll(`.chair-text-in-grid`)
+                .forEach((element) => {
+                    if (element.textContent.includes(`(${stackId})`)) {
+                        element.textContent = `C${currentNumber++} (${stackId})`; // Update C chair number
+                    }
+                });
         }
     }
 }
@@ -170,5 +238,83 @@ function addOrRemoveRobot(gridItem) {
         robotImage.className = "robot-in-grid";
         robotImage.draggable = false;
         gridItem.appendChild(robotImage);
+    }
+}
+
+function toggleHighlight(item) {
+    // Check if the item is a stack or C chair and toggle highlight
+    const chairText =
+        item.querySelector(".chair-text-in-grid")?.textContent || "";
+    if (chairText.startsWith("S") || chairText.startsWith("C")) {
+        if (
+            item.classList.contains("highlighted-stack") ||
+            item.classList.contains("highlighted-chair")
+        ) {
+            // Unhighlight the stack and associated C chairs
+            document
+                .querySelectorAll(".highlighted-stack, .highlighted-chair")
+                .forEach((el) =>
+                    el.classList.remove(
+                        "highlighted-stack",
+                        "highlighted-chair"
+                    )
+                );
+        } else {
+            // Clear existing highlights
+            document
+                .querySelectorAll(".highlighted-stack, .highlighted-chair")
+                .forEach((el) =>
+                    el.classList.remove(
+                        "highlighted-stack",
+                        "highlighted-chair"
+                    )
+                );
+
+            if (chairText.startsWith("S")) {
+                // Highlight the stack
+                item.classList.add("highlighted-stack");
+                // Highlight associated C chairs
+                document
+                    .querySelectorAll(
+                        ".chair-container-in-grid .chair-text-in-grid"
+                    )
+                    .forEach((el) => {
+                        if (el.textContent.includes(`(${chairText})`)) {
+                            el.closest(".grid-item").classList.add(
+                                "highlighted-chair"
+                            );
+                        }
+                    });
+            } else if (chairText.startsWith("C")) {
+                // Highlight the C chair
+                item.classList.add("highlighted-chair");
+                // Extract the stack ID from the C chair text
+                const stackId = chairText.match(/\((S\d+)\)/)[1];
+                // Highlight the associated stack
+                document
+                    .querySelectorAll(
+                        ".chair-container-in-grid .chair-text-in-grid"
+                    )
+                    .forEach((el) => {
+                        if (el.textContent === stackId) {
+                            el.closest(".grid-item").classList.add(
+                                "highlighted-stack"
+                            );
+                        }
+                    });
+                // Highlight all C chairs associated with this stack
+                document
+                    .querySelectorAll(
+                        ".chair-container-in-grid .chair-text-in-grid"
+                    )
+                    .forEach((el) => {
+                        if (el.textContent.includes(`(${stackId})`)) {
+                            el.closest(".grid-item").classList.add(
+                                "highlighted-chair"
+                            );
+                        }
+                    });
+            }
+        }
     }
 }

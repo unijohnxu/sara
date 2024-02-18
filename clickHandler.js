@@ -32,7 +32,7 @@ gridContainer.addEventListener("dragstart", (event) => {
 // Functionality depends on which mode is active
 function handleGridClick(event) {
     const gridItem = event.target.closest(".grid-item");
-    if (!gridItem) return; // Exit if clicked object is not a grid item
+    if (!gridItem) return; // Exit if clicked object is not a grid item#
 
     switch (currentMode) {
         case "stack":
@@ -51,6 +51,7 @@ function handleGridClick(event) {
             addOrRemoveRobot(gridItem);
             break;
         default:
+            toggleHighlight(gridItem);
             break;
     }
 

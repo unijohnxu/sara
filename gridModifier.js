@@ -5,10 +5,38 @@ const urlParams = new URLSearchParams(window.location.search);
 let rows = parseInt(urlParams.get("rows"));
 let columns = parseInt(urlParams.get("columns"));
 
-function createGridFromData(gridData) {
+function createGrid() {
     const gridContainer = document.querySelector(".grid-container");
     gridContainer.innerHTML = ""; // Clear existing grid items
 
+    // Check for query parameters first
+    if (rows && columns) {
+        createGridFromDimensions(rows, columns);
+        localStorage.removeItem("gridData");
+    } else {
+        rows = 5;
+        columns = 5;
+        // Retrieve grid data from localStorage if no query parameters are found
+        const gridDataJson = localStorage.getItem("gridData");
+        if (gridDataJson && gridDataJson !== "null") {
+            try {
+                const gridData = JSON.parse(gridDataJson);
+                createGridFromData(gridData);
+            } catch (error) {
+                console.error(
+                    "Error parsing grid data from localStorage:",
+                    error
+                );
+                alert("Invalid grid data. Using fallback grid size.");
+                createGridFromDimensions(rows, columns); // Use fallback grid size if data is invalid
+            }
+        } else {
+            createGridFromDimensions(rows, columns); // Use default grid size if no data is found
+        }
+    }
+}
+
+function createGridFromData(gridData) {
     // Update rows and columns based on gridData dimensions
     rows = gridData.length;
     columns = gridData[0].length;
@@ -26,8 +54,6 @@ function createGridFromData(gridData) {
 }
 
 function createGridFromDimensions(rows, columns) {
-    const gridContainer = document.querySelector(".grid-container");
-    gridContainer.innerHTML = ""; // Clear existing grid items
     gridContainer.style.gridTemplateColumns = `repeat(${columns}, ${gridSize}px)`;
 
     for (let row = 1; row <= rows; row++) {
@@ -55,35 +81,31 @@ function updateGridCentering() {
     }
 }
 
+// Fix for iOS bug where images don't appear properly on first load
 document.addEventListener("DOMContentLoaded", function () {
-    // Check for query parameters first
-    if (rows && columns) {
-        createGridFromDimensions(rows, columns);
-        localStorage.removeItem("gridData");
+    // Check if the 'refreshed' flag is set in localStorage
+    if (!localStorage.getItem("refreshed")) {
+        // Set the flag to true to indicate the page will be refreshed
+        localStorage.setItem("refreshed", "true");
+
+        // Refresh the page after 0.5 seconds
+        setTimeout(function () {
+            window.location.reload();
+        }, 500);
     } else {
-        rows = 5;
-        columns = 5;
-        // Retrieve grid data from localStorage if no query parameters are found
-        const gridDataJson = localStorage.getItem("gridData");
-        if (gridDataJson && gridDataJson !== "null") {
-            try {
-                const gridData = JSON.parse(gridDataJson);
-                createGridFromData(gridData);
-            } catch (error) {
-                console.error(
-                    "Error parsing grid data from localStorage:",
-                    error
-                );
-                alert("Invalid grid data. Using fallback grid size.");
-                createGridFromDimensions(rows, columns); // Use fallback grid size if data is invalid
-            }
-        } else {
-            createGridFromDimensions(rows, columns); // Use default grid size if no data is found
-        }
+        // Reset the flag so the page can be refreshed on the next load
+        localStorage.removeItem("refreshed");
     }
 
-    // Update grid centering
+    createGrid();
     updateGridCentering();
 });
 
 window.addEventListener("resize", updateGridCentering);
+
+document.getElementById("clear-layout").addEventListener("click", function () {
+    createGrid();
+    updateGridCentering();
+    allocatedNumbers.clear();
+    allocatedCNumbersByStack = {};
+});

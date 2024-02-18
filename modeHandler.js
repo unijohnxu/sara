@@ -15,11 +15,17 @@ Object.keys(modeLogos).forEach((mode) => {
 });
 
 function toggleMode(selectedMode) {
+    // Clear any highlights when a mode is selected
+    document
+        .querySelectorAll(".highlighted-stack, .highlighted-chair")
+        .forEach((el) =>
+            el.classList.remove("highlighted-stack", "highlighted-chair")
+        );
+
     currentMode = currentMode === selectedMode ? null : selectedMode; // If selected mode is the current mode, current mode becomes nothing
     updateUIModes();
     if (selectedStack) {
         // If stack was selected in place mode, remove selection
-        selectedStack.classList.remove("selected-in-grid");
         selectedStack = null;
     }
 }

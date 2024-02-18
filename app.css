@@ -165,10 +165,14 @@ input[type="submit"],
     pointer-events: none;
 }
 
-.selected-in-grid {
-    /* Selected stack */
-    border: 2px solid yellow;
-    background-color: rgba(255, 255, 0, 0.2);
+.highlighted-stack {
+    border-color: #da3;
+    background-color: rgba(221, 170, 51, 0.7);
+}
+
+.highlighted-chair {
+    border-color: #048;
+    background-color: rgba(0, 68, 136, 0.7);
 }
 
 .robot-in-grid {
@@ -184,14 +188,15 @@ input[type="submit"],
     cursor: pointer;
 }
 
-#send-json {
-    margin: auto;
+.grid-buttons {
     width: 25%;
-    display: block;
 }
 
 #send-div {
-    margin: 20px auto 55px auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 20px auto 120px auto;
 }
 
 /* For smaller screens */
