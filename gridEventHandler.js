@@ -168,6 +168,11 @@ function rotateChair(gridItem, isQuickClick) {
                 chairImage.style.transform = `rotate(${this.value}deg)`;
                 chairImage.dataset.rotation = this.value;
             };
+        } else {
+            activeChair.classList.remove("highlighted-yellow");
+            document.getElementById("rotateControlPanel").style.display =
+                "none";
+            activeChair = null;
         }
     }
 }
