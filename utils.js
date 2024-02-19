@@ -1,9 +1,8 @@
 // Grid, stack, chair numbering data
 const gridContainer = document.querySelector(".grid-container");
-let selectedStack = null;
+let selectedStack = null; // Stack mode
+let activeChair = null; // Rotate mode
 const maxChairsPerStack = 3; // Maximum C chairs per stack
-
-// Stack/chair number calculation
 const allocatedCNumbersByStack = {}; // for C chairs (chairs associated with stacks, e.g. C1 (S1), C2 (S2))
 const allocatedNumbers = new Set(); // for stacks
 

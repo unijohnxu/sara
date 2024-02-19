@@ -17,17 +17,18 @@ Object.keys(modeLogos).forEach((mode) => {
 function toggleMode(selectedMode) {
     // Clear any highlights when a mode is selected
     document
-        .querySelectorAll(".highlighted-stack, .highlighted-chair")
+        .querySelectorAll(".highlighted-yellow, .highlighted-blue")
         .forEach((el) =>
-            el.classList.remove("highlighted-stack", "highlighted-chair")
+            el.classList.remove("highlighted-yellow", "highlighted-blue")
         );
+    document.getElementById("rotateControlPanel").style.display = "none";
 
     currentMode = currentMode === selectedMode ? null : selectedMode; // If selected mode is the current mode, current mode becomes nothing
     updateUIModes();
-    if (selectedStack) {
-        // If stack was selected in place mode, remove selection
-        selectedStack = null;
-    }
+
+    // If stack was selected in place mode, remove selection
+    selectedStack = null;
+    activeChair = null;
 }
 
 // Function for green border around mode logo, and also for which mode is active

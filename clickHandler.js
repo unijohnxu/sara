@@ -1,25 +1,40 @@
 // Used for mouse holding functionality
 let lastGridItem;
 let isMouseDown = false;
+let isQuickClick; // Variable to determine if it's a quick click
 
-// When mouse is held down, set isMouseDown to true
 gridContainer.addEventListener("mousedown", (event) => {
-    // Left click button code is 0
     if (event.button === 0) {
+        // Left click
         isMouseDown = true;
-        handleGridClick(event);
+        isQuickClick = true;
+
+        if (currentMode === "rotate") {
+            setTimeout(() => {
+                if (isMouseDown) {
+                    // If the mouse is still down, it's a hold
+                    isQuickClick = false; // Not a quick click
+                    handleGridClick(event);
+                }
+            }, 200); // Differentiate between click and hold
+        } else {
+            handleGridClick(event);
+        }
     }
 });
 
-// When mouse is released, set isMouseDown to false
-document.addEventListener("mouseup", () => {
-    isMouseDown = false;
+document.addEventListener("mouseup", (event) => {
+    if (isMouseDown && isQuickClick && currentMode === "rotate") {
+        handleGridClick(event);
+    }
+    isMouseDown = false; // Reset mouse down status
 });
 
 // When mouse is held down and hovering over a grid item
 gridContainer.addEventListener("mouseover", (event) => {
     const gridItem = event.target.closest(".grid-item");
     if (isMouseDown && gridItem !== lastGridItem) {
+        isQuickClick = true;
         handleGridClick(event);
     }
 });
@@ -42,7 +57,7 @@ function handleGridClick(event) {
             handlePlaceMode(gridItem);
             break;
         case "rotate":
-            rotateChair(gridItem);
+            rotateChair(gridItem, isQuickClick);
             break;
         case "delete":
             deleteChair(gridItem);

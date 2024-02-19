@@ -81,22 +81,7 @@ function updateGridCentering() {
     }
 }
 
-// Fix for iOS bug where images don't appear properly on first load
 document.addEventListener("DOMContentLoaded", function () {
-    // Check if the 'refreshed' flag is set in localStorage
-    if (!localStorage.getItem("refreshed")) {
-        // Set the flag to true to indicate the page will be refreshed
-        localStorage.setItem("refreshed", "true");
-
-        // Refresh the page after 0.5 seconds
-        setTimeout(function () {
-            window.location.reload();
-        }, 500);
-    } else {
-        // Reset the flag so the page can be refreshed on the next load
-        localStorage.removeItem("refreshed");
-    }
-
     createGrid();
     updateGridCentering();
 });
@@ -107,5 +92,7 @@ document.getElementById("clear-layout").addEventListener("click", function () {
     createGrid();
     updateGridCentering();
     allocatedNumbers.clear();
-    allocatedCNumbersByStack = {};
+    Object.keys(allocatedCNumbersByStack).forEach((key) => {
+        delete allocatedCNumbersByStack[key];
+    });
 });

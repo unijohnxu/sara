@@ -80,30 +80,114 @@ function handlePlaceMode(gridItem) {
         // Selecting or deselecting a stack
         if (selectedStack === gridItem) {
             // Deselect if the same stack is clicked again
-            selectedStack.classList.remove("highlighted-stack");
+            selectedStack.classList.remove("highlighted-yellow");
             selectedStack = null;
         } else {
             // Select a new stack
             if (selectedStack)
-                selectedStack.classList.remove("highlighted-stack");
+                selectedStack.classList.remove("highlighted-yellow");
             selectedStack = gridItem;
-            gridItem.classList.add("highlighted-stack");
+            gridItem.classList.add("highlighted-yellow");
         }
     }
 }
 
-function rotateChair(gridItem) {
+// function rotateChair(gridItem) {
+//     const chairContainer = gridItem.querySelector(".chair-container-in-grid");
+//     if (!chairContainer) return; // Exit if there's no chair container
+
+//     if (chairContainer === activeChair) {
+//         activeChair.classList.remove("highlighted-yellow");
+//         document.getElementById("rotateControlPanel").style.display = "none";
+//         activeChair = null;
+//     } else {
+//         if (activeChair) {
+//             activeChair.classList.remove("highlighted-yellow");
+//         }
+//         chairContainer.classList.add("highlighted-yellow");
+//         activeChair = chairContainer;
+//         document.getElementById("rotateControlPanel").style.display = "flex";
+
+//         const rotationRange = document.getElementById("rotationRange");
+//         const rotationDegree = document.getElementById("rotationDegree");
+
+//         // Set the initial value and text
+//         rotationRange.value = activeChair.dataset.rotation || 0;
+//         rotationDegree.textContent = `${rotationRange.value}°`;
+
+//         rotationRange.oninput = function () {
+//             rotationDegree.textContent = `${this.value}°`;
+//             const chairImage = activeChair.querySelector(".chair-in-grid");
+//             if (chairImage) {
+//                 chairImage.style.transform = `rotate(${this.value}deg)`;
+//                 activeChair.dataset.rotation = this.value;
+//             }
+//         };
+//     }
+// }
+
+function rotateChair(gridItem, isQuickClick) {
     const chairContainer = gridItem.querySelector(".chair-container-in-grid");
-    if (!chairContainer) return; // Skip if there is no chair
+    if (!chairContainer) return; // Exit if there's no chair container
 
     const chairImage = chairContainer.querySelector(".chair-in-grid");
-    // Don't rotate robot
-    if (chairImage) {
-        const currentRotation = parseInt(chairImage.dataset.rotation || 0); // Default of 0
-        const newRotation = (currentRotation + 90) % 360;
-        chairImage.style.transform = `rotate(${newRotation}deg)`;
-        chairImage.dataset.rotation = newRotation.toString();
+    if (!chairImage) return; // Exit if there's no chair image
+
+    if (isQuickClick) {
+        // For a quick click, rotate the chair image by 90 degrees immediately
+        let currentRotation = parseInt(chairImage.dataset.rotation) || 0;
+        currentRotation = (currentRotation + 90) % 360; // Increment by 90 degrees, wrap around at 360
+        chairImage.dataset.rotation = currentRotation;
+        chairImage.style.transform = `rotate(${currentRotation}deg)`;
+        if (activeChair) {
+            activeChair.classList.remove("highlighted-yellow");
+            document.getElementById("rotateControlPanel").style.display =
+                "none";
+            activeChair = null;
+        }
+    } else {
+        // For holding, show the rotation control panel and highlight the chair
+        if (chairContainer !== activeChair) {
+            if (activeChair) {
+                activeChair.classList.remove("highlighted-yellow");
+            }
+            chairContainer.classList.add("highlighted-yellow");
+            activeChair = chairContainer;
+            document.getElementById("rotateControlPanel").style.display =
+                "flex";
+
+            const rotationRange = document.getElementById("rotationRange");
+            const rotationDegree = document.getElementById("rotationDegree");
+
+            // Set the initial value and text
+            rotationRange.value = chairImage.dataset.rotation || 0;
+            rotationDegree.textContent = `${rotationRange.value}°`;
+
+            rotationRange.oninput = function () {
+                rotationDegree.textContent = `${this.value}°`;
+                chairImage.style.transform = `rotate(${this.value}deg)`;
+                chairImage.dataset.rotation = this.value;
+            };
+        }
     }
+}
+
+function positionRotationControl(chairContainer) {
+    // Assuming chairContainer is positioned relative to its parent grid container
+    const rect = chairContainer.getBoundingClientRect();
+    const gridRect = chairContainer.parentElement.getBoundingClientRect();
+    const control = document.getElementById("rotationControl");
+
+    // Calculate position relative to the grid container
+    control.style.left = `${
+        rect.left - gridRect.left + (rect.width - control.offsetWidth) / 2
+    }px`;
+    control.style.top = `${
+        rect.top - gridRect.top + (rect.height - control.offsetHeight) / 2
+    }px`;
+    control.style.visibility = "visible";
+
+    return control;
 }
 
 function deleteChair(gridItem) {
@@ -160,7 +244,7 @@ function deleteChair(gridItem) {
                     );
                 }
 
-                // Renumber stacks
+                // Renumber chairs
                 if (currentNumber > stackNumber) {
                     const newNumber = currentNumber - 1;
                     const newText = isStack
@@ -247,32 +331,32 @@ function toggleHighlight(item) {
         item.querySelector(".chair-text-in-grid")?.textContent || "";
     if (chairText.startsWith("S") || chairText.startsWith("C")) {
         if (
-            item.classList.contains("highlighted-stack") ||
-            item.classList.contains("highlighted-chair")
+            item.classList.contains("highlighted-yellow") ||
+            item.classList.contains("highlighted-blue")
         ) {
             // Unhighlight the stack and associated C chairs
             document
-                .querySelectorAll(".highlighted-stack, .highlighted-chair")
+                .querySelectorAll(".highlighted-yellow, .highlighted-blue")
                 .forEach((el) =>
                     el.classList.remove(
-                        "highlighted-stack",
-                        "highlighted-chair"
+                        "highlighted-yellow",
+                        "highlighted-blue"
                     )
                 );
         } else {
             // Clear existing highlights
             document
-                .querySelectorAll(".highlighted-stack, .highlighted-chair")
+                .querySelectorAll(".highlighted-yellow, .highlighted-blue")
                 .forEach((el) =>
                     el.classList.remove(
-                        "highlighted-stack",
-                        "highlighted-chair"
+                        "highlighted-yellow",
+                        "highlighted-blue"
                     )
                 );
 
             if (chairText.startsWith("S")) {
                 // Highlight the stack
-                item.classList.add("highlighted-stack");
+                item.classList.add("highlighted-yellow");
                 // Highlight associated C chairs
                 document
                     .querySelectorAll(
@@ -281,13 +365,13 @@ function toggleHighlight(item) {
                     .forEach((el) => {
                         if (el.textContent.includes(`(${chairText})`)) {
                             el.closest(".grid-item").classList.add(
-                                "highlighted-chair"
+                                "highlighted-blue"
                             );
                         }
                     });
             } else if (chairText.startsWith("C")) {
                 // Highlight the C chair
-                item.classList.add("highlighted-chair");
+                item.classList.add("highlighted-blue");
                 // Extract the stack ID from the C chair text
                 const stackId = chairText.match(/\((S\d+)\)/)[1];
                 // Highlight the associated stack
@@ -298,7 +382,7 @@ function toggleHighlight(item) {
                     .forEach((el) => {
                         if (el.textContent === stackId) {
                             el.closest(".grid-item").classList.add(
-                                "highlighted-stack"
+                                "highlighted-yellow"
                             );
                         }
                     });
@@ -310,7 +394,7 @@ function toggleHighlight(item) {
                     .forEach((el) => {
                         if (el.textContent.includes(`(${stackId})`)) {
                             el.closest(".grid-item").classList.add(
-                                "highlighted-chair"
+                                "highlighted-blue"
                             );
                         }
                     });
