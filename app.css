@@ -1,6 +1,11 @@
-:root {
+/* Apply user-select none to all elements to prevent text selection */
+* {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Standard syntax */
+    -webkit-touch-callout: none; /* iOS Safari */
     color-scheme: light only;
-    user-select: none;
 }
 
 img {
@@ -157,7 +162,7 @@ input[type="submit"],
     width: 90%;
     height: 90%;
     object-fit: contain;
-    transition: transform 0.3s ease; /* Rotation transition */
+    transition: transform 0.1s ease; /* Rotation transition */
     transform-origin: center; /* Centered rotation */
 }
 

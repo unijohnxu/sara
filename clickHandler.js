@@ -16,7 +16,7 @@ gridContainer.addEventListener("mousedown", (event) => {
                     isQuickClick = false; // Not a quick click
                     handleGridClick(event);
                 }
-            }, 200); // Differentiate between click and hold
+            }, 500); // Differentiate between click and hold
         } else {
             handleGridClick(event);
         }
