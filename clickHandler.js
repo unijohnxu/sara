@@ -3,7 +3,7 @@ let lastGridItem;
 let isMouseDown = false;
 let isQuickClick; // Variable to determine if it's a quick click
 
-gridContainer.addEventListener("mousedown", (event) => {
+function gridMouseDown(event) {
     if (event.button === 0) {
         // Left click
         isMouseDown = true;
@@ -21,9 +21,9 @@ gridContainer.addEventListener("mousedown", (event) => {
             handleGridClick(event);
         }
     }
-});
+}
 
-document.addEventListener("mousedown", (event) => {
+function documentMouseDown(event) {
     const rotateControlPanel = document.getElementById("rotateControlPanel");
 
     // Check if rotateControlPanel exists and is currently displayed
@@ -38,14 +38,21 @@ document.addEventListener("mousedown", (event) => {
             }
         }
     }
-});
+}
 
-document.addEventListener("mouseup", (event) => {
+function documentMouseUp(event) {
     if (isMouseDown && isQuickClick && currentMode === "rotate") {
         handleGridClick(event);
     }
     isMouseDown = false; // Reset mouse down status
-});
+}
+
+gridContainer.addEventListener("mousedown", gridMouseDown);
+gridContainer.addEventListener("touchstart", gridMouseDown);
+document.addEventListener("mousedown", documentMouseDown);
+document.addEventListener("touchstart", documentMouseDown);
+document.addEventListener("mouseup", documentMouseUp);
+document.addEventListener("touchend", documentMouseUp);
 
 // When mouse is held down and hovering over a grid item
 gridContainer.addEventListener("mouseover", (event) => {
