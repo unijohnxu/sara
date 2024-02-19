@@ -17,7 +17,7 @@ function addStack(gridItem) {
     chairImage.src = "chair.png";
     chairImage.alt = "Chair";
     chairImage.className = "chair-in-grid";
-    chairImage.draggable = false;
+    // chairImage.draggable = false;
 
     // Chair text
     const chairText = document.createElement("span");
@@ -63,7 +63,7 @@ function handlePlaceMode(gridItem) {
         chairImage.src = "chair.png";
         chairImage.alt = "Chair";
         chairImage.className = "chair-in-grid";
-        chairImage.draggable = false;
+        // chairImage.draggable = false;
 
         // Chair text
         const chairText = document.createElement("span");
@@ -320,7 +320,7 @@ function addOrRemoveRobot(gridItem) {
         robotImage.src = "robot.png";
         robotImage.alt = "Robot";
         robotImage.className = "robot-in-grid";
-        robotImage.draggable = false;
+        // robotImage.draggable = false;
         gridItem.appendChild(robotImage);
     }
 }

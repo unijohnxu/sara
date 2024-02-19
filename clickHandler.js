@@ -23,6 +23,23 @@ gridContainer.addEventListener("mousedown", (event) => {
     }
 });
 
+document.addEventListener("mousedown", (event) => {
+    const rotateControlPanel = document.getElementById("rotateControlPanel");
+
+    // Check if rotateControlPanel exists and is currently displayed
+    if (rotateControlPanel && rotateControlPanel.style.display !== "none") {
+        // Check if the click is outside the rotateControlPanel
+        if (!rotateControlPanel.contains(event.target)) {
+            // Hide the control panel and remove highlighting from the active chair if any
+            rotateControlPanel.style.display = "none";
+            if (activeChair) {
+                activeChair.classList.remove("highlighted-yellow");
+                activeChair = null; // Reset active chair
+            }
+        }
+    }
+});
+
 document.addEventListener("mouseup", (event) => {
     if (isMouseDown && isQuickClick && currentMode === "rotate") {
         handleGridClick(event);
@@ -39,10 +56,10 @@ gridContainer.addEventListener("mouseover", (event) => {
     }
 });
 
-// Prevent images from being dragged
-gridContainer.addEventListener("dragstart", (event) => {
-    event.preventDefault();
-});
+// // Prevent images from being dragged
+// gridContainer.addEventListener("dragstart", (event) => {
+//     event.preventDefault();
+// });
 
 // Functionality depends on which mode is active
 function handleGridClick(event) {
