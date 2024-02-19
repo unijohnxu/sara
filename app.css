@@ -72,6 +72,7 @@ input[type="submit"],
     max-height: 100%;
     max-width: 100%;
     padding: 0.1em;
+    pointer-events: none;
 }
 
 .mode-logo-text {
@@ -156,6 +157,7 @@ input[type="submit"],
     object-fit: contain;
     transition: transform 0.3s ease; /* Rotation transition */
     transform-origin: center; /* Centered rotation */
+    pointer-events: none;
 }
 
 .chair-text-in-grid {
