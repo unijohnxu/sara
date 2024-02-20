@@ -17,6 +17,7 @@ function addStack(gridItem) {
     chairImage.src = "chair.png";
     chairImage.alt = "Chair";
     chairImage.className = "chair-in-grid";
+    chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
     // chairImage.draggable = false;
 
     // Chair text
@@ -63,6 +64,7 @@ function handlePlaceMode(gridItem) {
         chairImage.src = "chair.png";
         chairImage.alt = "Chair";
         chairImage.className = "chair-in-grid";
+        chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
         // chairImage.draggable = false;
 
         // Chair text
@@ -92,40 +94,6 @@ function handlePlaceMode(gridItem) {
     }
 }
 
-// function rotateChair(gridItem) {
-//     const chairContainer = gridItem.querySelector(".chair-container-in-grid");
-//     if (!chairContainer) return; // Exit if there's no chair container
-
-//     if (chairContainer === activeChair) {
-//         activeChair.classList.remove("highlighted-yellow");
-//         document.getElementById("rotateControlPanel").style.display = "none";
-//         activeChair = null;
-//     } else {
-//         if (activeChair) {
-//             activeChair.classList.remove("highlighted-yellow");
-//         }
-//         chairContainer.classList.add("highlighted-yellow");
-//         activeChair = chairContainer;
-//         document.getElementById("rotateControlPanel").style.display = "flex";
-
-//         const rotationRange = document.getElementById("rotationRange");
-//         const rotationDegree = document.getElementById("rotationDegree");
-
-//         // Set the initial value and text
-//         rotationRange.value = activeChair.dataset.rotation || 0;
-//         rotationDegree.textContent = `${rotationRange.value}°`;
-
-//         rotationRange.oninput = function () {
-//             rotationDegree.textContent = `${this.value}°`;
-//             const chairImage = activeChair.querySelector(".chair-in-grid");
-//             if (chairImage) {
-//                 chairImage.style.transform = `rotate(${this.value}deg)`;
-//                 activeChair.dataset.rotation = this.value;
-//             }
-//         };
-//     }
-// }
-
 function rotateChair(gridItem, isQuickClick) {
     const chairContainer = gridItem.querySelector(".chair-container-in-grid");
     if (!chairContainer) return; // Exit if there's no chair container
@@ -135,7 +103,8 @@ function rotateChair(gridItem, isQuickClick) {
 
     if (isQuickClick) {
         // For a quick click, rotate the chair image by 90 degrees immediately
-        let currentRotation = parseInt(chairImage.dataset.rotation) || 0;
+        let currentRotation =
+            parseInt(chairImage.dataset.rotation) || defaultRotationDegree;
         currentRotation = (currentRotation + 90) % 360; // Increment by 90 degrees, wrap around at 360
         chairImage.dataset.rotation = currentRotation;
         chairImage.style.transform = `rotate(${currentRotation}deg)`;
@@ -160,7 +129,8 @@ function rotateChair(gridItem, isQuickClick) {
             const rotationDegree = document.getElementById("rotationDegree");
 
             // Set the initial value and text
-            rotationRange.value = chairImage.dataset.rotation || 0;
+            rotationRange.value =
+                chairImage.dataset.rotation || defaultRotationDegree;
             rotationDegree.textContent = `${rotationRange.value}°`;
 
             rotationRange.oninput = function () {
@@ -175,24 +145,6 @@ function rotateChair(gridItem, isQuickClick) {
             activeChair = null;
         }
     }
-}
-
-function positionRotationControl(chairContainer) {
-    // Assuming chairContainer is positioned relative to its parent grid container
-    const rect = chairContainer.getBoundingClientRect();
-    const gridRect = chairContainer.parentElement.getBoundingClientRect();
-    const control = document.getElementById("rotationControl");
-
-    // Calculate position relative to the grid container
-    control.style.left = `${
-        rect.left - gridRect.left + (rect.width - control.offsetWidth) / 2
-    }px`;
-    control.style.top = `${
-        rect.top - gridRect.top + (rect.height - control.offsetHeight) / 2
-    }px`;
-    control.style.visibility = "visible";
-
-    return control;
 }
 
 function deleteChair(gridItem) {

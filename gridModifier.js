@@ -92,6 +92,7 @@ document.getElementById("clear-layout").addEventListener("click", function () {
     createGrid();
     updateGridCentering();
     allocatedNumbers.clear();
+    defaultRotationDegree = 0;
     Object.keys(allocatedCNumbersByStack).forEach((key) => {
         delete allocatedCNumbersByStack[key];
     });

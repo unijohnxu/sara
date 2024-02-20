@@ -90,15 +90,19 @@
         <div class="grid-container"></div>
 
         <div id="rotateControlPanel" style="display: none">
-            <input
-                type="range"
-                id="rotationRange"
-                min="0"
-                max="350"
-                step="10"
-                value="0"
-            />
-            <span id="rotationDegree">0°</span>
+            <div id="rotationRangeDegreeDiv">
+                <input
+                    type="range"
+                    id="rotationRange"
+                    min="0"
+                    max="350"
+                    step="10"
+                    value="0"
+                />
+                <span id="rotationDegree">0°</span>
+            </div>
+
+            <button id="rotationButton">Set as Default</button>
         </div>
 
         <div id="send-div">

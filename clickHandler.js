@@ -90,3 +90,8 @@ function handleGridClick(event) {
 
     lastGridItem = gridItem;
 }
+
+document.getElementById("rotationButton").addEventListener("click", () => {
+    const rotationRangeValue = document.getElementById("rotationRange").value;
+    defaultRotationDegree = parseInt(rotationRangeValue); // Update the default rotation degree
+});

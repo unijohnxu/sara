@@ -2,6 +2,7 @@
 const gridContainer = document.querySelector(".grid-container");
 let selectedStack = null; // Stack mode
 let activeChair = null; // Rotate mode
+let defaultRotationDegree = 0; // Default rotation degree for new chairs
 const maxChairsPerStack = 3; // Maximum C chairs per stack
 const allocatedCNumbersByStack = {}; // for C chairs (chairs associated with stacks, e.g. C1 (S1), C2 (S2))
 const allocatedNumbers = new Set(); // for stacks
