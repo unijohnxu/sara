@@ -190,6 +190,11 @@ input[type="submit"],
     opacity: 0.5; /* Make the preview chair faded */
 }
 
+.highlighted-red {
+    border-color: #b56;
+    background-color: rgba(187, 85, 102, 0.7);
+}
+
 .highlighted-yellow {
     border-color: #da3;
     background-color: rgba(221, 170, 51, 0.7);
