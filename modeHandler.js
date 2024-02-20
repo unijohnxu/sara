@@ -1,10 +1,11 @@
 // Modes
 let currentMode = null;
-const modes = ["stack", "place", "rotate", "delete", "robot"];
+const modes = ["stack", "place", "rotate", "move", "delete", "robot"];
 const modeLogos = {
     stack: document.getElementById("stack-logo"),
     place: document.getElementById("place-logo"),
     rotate: document.getElementById("rotate-logo"),
+    move: document.getElementById("move-logo"),
     delete: document.getElementById("delete-logo"),
     robot: document.getElementById("robot-logo"),
 };
@@ -21,14 +22,13 @@ function toggleMode(selectedMode) {
         .forEach((el) =>
             el.classList.remove("highlighted-yellow", "highlighted-blue")
         );
-    document.getElementById("rotateControlPanel").style.display = "none";
-
     currentMode = currentMode === selectedMode ? null : selectedMode; // If selected mode is the current mode, current mode becomes nothing
     updateUIModes();
 
     // If stack was selected in place mode, remove selection
     selectedStack = null;
-    activeChair = null;
+    selectedRotatingChair = null;
+    selectedMovingChair = null;
 }
 
 // Function for green border around mode logo, and also for which mode is active

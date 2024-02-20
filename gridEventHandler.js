@@ -18,6 +18,7 @@ function addStack(gridItem) {
     chairImage.alt = "Chair";
     chairImage.className = "chair-in-grid";
     chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
+    chairImage.dataset.rotation = defaultRotationDegree;
     // chairImage.draggable = false;
 
     // Chair text
@@ -65,6 +66,7 @@ function handlePlaceMode(gridItem) {
         chairImage.alt = "Chair";
         chairImage.className = "chair-in-grid";
         chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
+        chairImage.dataset.rotation = defaultRotationDegree;
         // chairImage.draggable = false;
 
         // Chair text
@@ -103,47 +105,60 @@ function rotateChair(gridItem, isQuickClick) {
 
     if (isQuickClick) {
         // For a quick click, rotate the chair image by 90 degrees immediately
-        let currentRotation =
-            parseInt(chairImage.dataset.rotation) || defaultRotationDegree;
+        let currentRotation = parseInt(chairImage.dataset.rotation); // Directly use dataset.rotation which should always be set
         currentRotation = (currentRotation + 90) % 360; // Increment by 90 degrees, wrap around at 360
-        chairImage.dataset.rotation = currentRotation;
+        chairImage.dataset.rotation = currentRotation; // Update rotation in dataset
         chairImage.style.transform = `rotate(${currentRotation}deg)`;
-        if (activeChair) {
-            activeChair.classList.remove("highlighted-yellow");
-            document.getElementById("rotateControlPanel").style.display =
-                "none";
-            activeChair = null;
-        }
     } else {
         // For holding, show the rotation control panel and highlight the chair
-        if (chairContainer !== activeChair) {
-            if (activeChair) {
-                activeChair.classList.remove("highlighted-yellow");
+        if (chairContainer !== selectedRotatingChair) {
+            if (selectedRotatingChair) {
+                selectedRotatingChair.classList.remove("highlighted-yellow");
             }
             chairContainer.classList.add("highlighted-yellow");
-            activeChair = chairContainer;
+            selectedRotatingChair = chairContainer;
             document.getElementById("rotateControlPanel").style.display =
                 "flex";
 
             const rotationRange = document.getElementById("rotationRange");
             const rotationDegree = document.getElementById("rotationDegree");
 
-            // Set the initial value and text
-            rotationRange.value =
-                chairImage.dataset.rotation || defaultRotationDegree;
+            rotationRange.value = chairImage.dataset.rotation; // Use the rotation value from dataset
             rotationDegree.textContent = `${rotationRange.value}°`;
 
             rotationRange.oninput = function () {
                 rotationDegree.textContent = `${this.value}°`;
                 chairImage.style.transform = `rotate(${this.value}deg)`;
-                chairImage.dataset.rotation = this.value;
+                chairImage.dataset.rotation = this.value; // Update rotation in dataset
             };
         } else {
-            activeChair.classList.remove("highlighted-yellow");
+            selectedRotatingChair.classList.remove("highlighted-yellow");
             document.getElementById("rotateControlPanel").style.display =
                 "none";
-            activeChair = null;
+            selectedRotatingChair = null;
         }
+    }
+}
+
+function moveChair(gridItem) {
+    if (gridItem.querySelector(".robot-in-grid")) return; // Skip if there's a robot
+    if (gridItem.classList.contains("black")) return; // Skip if there's an obstacle
+
+    const chairContainer = gridItem.querySelector(".chair-container-in-grid");
+
+    // If there's a selected chair to move and the current grid item is empty
+    if (selectedMovingChair && !chairContainer) {
+        // Move the selected chair to the new grid item
+        gridItem.appendChild(selectedMovingChair);
+    } else if (chairContainer !== selectedMovingChair) {
+        if (selectedMovingChair) {
+            selectedMovingChair.classList.remove("highlighted-yellow");
+        }
+        chairContainer.classList.add("highlighted-yellow");
+        selectedMovingChair = chairContainer;
+    } else if (selectedMovingChair) {
+        selectedMovingChair.classList.remove("highlighted-yellow");
+        selectedMovingChair = null;
     }
 }
 
