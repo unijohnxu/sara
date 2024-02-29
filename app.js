@@ -119,6 +119,11 @@ function adjustGridSize(change) {
     document.querySelectorAll(".chair-text-in-grid").forEach((element) => {
         element.style.fontSize = `${newFontSize}px`;
     });
+
+    // Reposition the rotation control if a chair is currently active
+    if (activeChair) {
+        positionRotationControl(activeChair);
+    }
 }
 
 // Calculation of font size for chair text based on the new grid size
@@ -242,9 +247,9 @@ document.addEventListener("pointerdown", (event) => {
         ) {
             // Hide the control panel and remove highlighting from the active chair if any
             rotateControlPanel.style.display = "none";
-            if (selectedRotatingChair) {
-                selectedRotatingChair.classList.remove("highlighted-yellow");
-                selectedRotatingChair = null; // Reset active chair
+            if (activeChair) {
+                activeChair.classList.remove("highlighted-yellow");
+                activeChair = null; // Reset active chair
             }
         }
     }
@@ -266,60 +271,12 @@ gridContainer.addEventListener("pointerover", (event) => {
         isQuickClick = true;
         handleGridClick(event);
     }
-
-    if (
-        !gridItem ||
-        gridItem.querySelector(".chair-container-in-grid") ||
-        gridItem.querySelector(".robot-in-grid") ||
-        gridItem.classList.contains("black")
-    ) {
-        // Exit if not hovering over a grid item or if the grid item contains a chair, a robot, or is an obstacle
-        return;
-    }
-
-    // Clear any previously shown preview chair
-    const existingPreview = document.querySelector(".preview-chair-container");
-    if (existingPreview) {
-        existingPreview.remove();
-    }
-
-    // Show a preview chair based on the current mode
-    if (currentMode === "stack") {
-        const previewChairContainer = createPreviewChair();
-        gridItem.appendChild(previewChairContainer);
-    } else if (currentMode === "move" && selectedMovingChair) {
-        // Get the rotation degree of the selected moving chair
-        const selectedChairImage =
-            selectedMovingChair.querySelector(".chair-in-grid");
-        const rotationDegree = selectedChairImage
-            ? parseInt(selectedChairImage.dataset.rotation) || 0
-            : defaultRotationDegree;
-
-        const previewChairContainer = createPreviewChair(rotationDegree);
-        gridItem.appendChild(previewChairContainer);
-    } else if (currentMode === "place" && selectedStack) {
-        const stackText = selectedStack.querySelector(
-            ".chair-text-in-grid"
-        ).textContent; // e.g., "S1"
-        if (
-            allocatedCNumbersByStack[stackText] < maxChairsPerStack ||
-            allocatedCNumbersByStack[stackText] === undefined
-        ) {
-            const previewChairContainer = createPreviewChair();
-            gridItem.appendChild(previewChairContainer);
-        }
-    }
 });
 
+// Functionality depends on which mode is active
 function handleGridClick(event) {
     const gridItem = event.target.closest(".grid-item");
-    if (!gridItem) return; // Exit if clicked object is not a grid item
-
-    // Clear any previously shown preview chair
-    const existingPreview = document.querySelector(".preview-chair-container");
-    if (existingPreview) {
-        existingPreview.remove();
-    }
+    if (!gridItem) return; // Exit if clicked object is not a grid item#
 
     switch (currentMode) {
         case "stack":
@@ -353,24 +310,6 @@ document.getElementById("rotationButton").addEventListener("click", () => {
     defaultRotationDegree = parseInt(rotationRangeValue); // Update the default rotation degree
 });
 
-function createPreviewChair(rotationDegree = defaultRotationDegree) {
-    // Create a container for the preview chair
-    const container = document.createElement("div");
-    container.className = "preview-chair-container";
-
-    const previewChair = document.createElement("img");
-    previewChair.src = "chair.png";
-    previewChair.alt = "Chair";
-    previewChair.className = "preview-chair-in-grid";
-    // Apply the given rotation
-    previewChair.style.transform = `rotate(${rotationDegree}deg)`;
-
-    // Append the preview chair image to the container
-    container.appendChild(previewChair);
-
-    return container;
-}
-
 function addStack(gridItem) {
     if (gridItem.querySelector(".robot-in-grid")) return; // Skip if there's a robot
     if (gridItem.classList.contains("black")) return; // Skip if there's an obstacle
@@ -391,7 +330,6 @@ function addStack(gridItem) {
     chairImage.alt = "Chair";
     chairImage.className = "chair-in-grid";
     chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
-    chairImage.dataset.rotation = defaultRotationDegree;
     // chairImage.draggable = false;
 
     // Chair text
@@ -439,7 +377,6 @@ function handlePlaceMode(gridItem) {
         chairImage.alt = "Chair";
         chairImage.className = "chair-in-grid";
         chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
-        chairImage.dataset.rotation = defaultRotationDegree;
         // chairImage.draggable = false;
 
         // Chair text
@@ -474,14 +411,20 @@ function rotateChair(gridItem, isQuickClick) {
     if (!chairContainer) return; // Exit if there's no chair container
 
     const chairImage = chairContainer.querySelector(".chair-in-grid");
-    if (!chairImage) return; // Exit if there's no chair image
 
     if (isQuickClick) {
         // For a quick click, rotate the chair image by 90 degrees immediately
-        let currentRotation = parseInt(chairImage.dataset.rotation); // Directly use dataset.rotation which should always be set
+        let currentRotation =
+            parseInt(chairImage.dataset.rotation) || defaultRotationDegree;
         currentRotation = (currentRotation + 90) % 360; // Increment by 90 degrees, wrap around at 360
-        chairImage.dataset.rotation = currentRotation; // Update rotation in dataset
+        chairImage.dataset.rotation = currentRotation;
         chairImage.style.transform = `rotate(${currentRotation}deg)`;
+        if (selectedRotatingChair) {
+            selectedRotatingChair.classList.remove("highlighted-yellow");
+            document.getElementById("rotateControlPanel").style.display =
+                "none";
+            selectedRotatingChair = null;
+        }
     } else {
         // For holding, show the rotation control panel and highlight the chair
         if (chairContainer !== selectedRotatingChair) {
@@ -496,13 +439,15 @@ function rotateChair(gridItem, isQuickClick) {
             const rotationRange = document.getElementById("rotationRange");
             const rotationDegree = document.getElementById("rotationDegree");
 
-            rotationRange.value = chairImage.dataset.rotation; // Use the rotation value from dataset
+            // Set the initial value and text
+            rotationRange.value =
+                chairImage.dataset.rotation || defaultRotationDegree;
             rotationDegree.textContent = `${rotationRange.value}°`;
 
             rotationRange.oninput = function () {
                 rotationDegree.textContent = `${this.value}°`;
                 chairImage.style.transform = `rotate(${this.value}deg)`;
-                chairImage.dataset.rotation = this.value; // Update rotation in dataset
+                chairImage.dataset.rotation = this.value;
             };
         } else {
             selectedRotatingChair.classList.remove("highlighted-yellow");
@@ -529,7 +474,7 @@ function moveChair(gridItem) {
         }
         chairContainer.classList.add("highlighted-yellow");
         selectedMovingChair = chairContainer;
-    } else if (selectedMovingChair) {
+    } else {
         selectedMovingChair.classList.remove("highlighted-yellow");
         selectedMovingChair = null;
     }
@@ -836,17 +781,39 @@ function generateGridDataJson() {
     return gridDataJson;
 }
 
+// const sendData = () => {
+//     const gridDataJson = generateGridDataJson();
+//     console.log(gridDataJson);
+
+//     const xhr = new XMLHttpRequest();
+//     xhr.open("POST", "http://localhost:8082");
+
+//     xhr.responseType = "json";
+//     xhr.onload = () => {
+//         if (xhr.readyState == 4 && xhr.status == 201) {
+//             console.log("no");
+//         } else {
+//             console.log(`Error: ${xhr.status}`);
+//         }
+//     };
+
+//     xhr.send(gridDataJson);
+//     console.log("Grid JSON data sent to server.");
+// };
+
+// document.getElementById("send-json").addEventListener("click", sendData);
+
 const sendData = () => {
     const gridDataJson = generateGridDataJson();
     console.log(gridDataJson);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:8082");
+    xhr.open("POST", "http://localhost:8082/grid"); // Updated URL
 
     xhr.responseType = "json";
     xhr.onload = () => {
-        if (xhr.readyState == 4 && xhr.status == 201) {
-            console.log("no");
+        if (xhr.readyState == 4 && xhr.status == 200) { // Updated status code
+            console.log("Success");
         } else {
             console.log(`Error: ${xhr.status}`);
         }
