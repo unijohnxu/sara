@@ -43,6 +43,12 @@
             </div>
         </nav>
 
+        <h2 id="layoutTitle"></h2>
+
+        <h3 id="roomStateLabel" style="display: none">
+            Current State: <span id="roomStateValue"></span>
+        </h3>
+
         <div id="legend">
             <div class="mode">
                 <div id="stack-logo" class="mode-logo">
@@ -126,8 +132,8 @@
             <button class="grid-buttons" id="save-layout">
                 <span>Save Layout</span>
             </button>
-            <button class="grid-buttons" id="send-json">
-                <span>Initiate Robot</span>
+            <button class="grid-buttons" id="initiateRobot" disabled>
+                <span>Initiate Robot - Arrange Chairs</span>
             </button>
             <button class="grid-buttons" id="clear-layout">
                 <span>Clear Layout</span>
@@ -176,16 +182,24 @@
                 yellow and their chairs are highlighted blue.
             </p>
             <p>
-                Once you are done with the layout, you can
+                You can <strong>save the layout</strong> by first giving it a
+                name. Once a layout is saved, it will be considered a room SARA
+                can operate within. Rooms are either in a stacked or unstacked
+                state, and now you can finally
                 <strong>initiate the robot</strong> to start doing its work.
-                <strong>Saving layouts</strong> require you to enter a name,
-                which can then be used to access the layout in 'Choose Ready
-                Rooms' at the navigation bar.
+            </p>
+            <p>
+                You can access any room in the future in the
+                <strong>'Choose Ready Rooms'</strong> page found at the
+                navigation bar. You will also be able to rename and delete
+                rooms, as well as have the JSON data associated with the rooms
+                there.
             </p>
         </div>
 
         <!-- <script src="app.js"></script> -->
         <script src="gridModifier.js"></script>
+        <script src="layoutModifier.js"></script>
         <script src="zoomHandler.js"></script>
         <script src="utils.js"></script>
         <script src="invalidChairsHandler.js"></script>

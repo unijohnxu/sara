@@ -68,20 +68,39 @@
         </nav>
 
         <div id="input">
-            <h2>Dimensions</h2>
-            <form action="index.html" method="GET">
-                <div id="dimensions">
-                    <label for="columns">Columns:</label>
-                    <input type="number" name="columns" min="1" />
-                    <label for="rows">Rows:</label>
-                    <input type="number" name="rows" min="1" />
-                    <button type="submit">Generate Grid</button>
-                </div>
-            </form>
+            <div id="input-dimensions">
+                <h2>Dimensions</h2>
+                <form action="index.html" method="GET">
+                    <div id="dimensions">
+                        <label for="columns">Columns:</label>
+                        <input
+                            type="number"
+                            name="columns"
+                            min="1"
+                            id="columns"
+                        />
+                        <label for="rows">Rows:</label>
+                        <input type="number" name="rows" min="1" id="rows" />
+                        <button type="submit">Generate Grid</button>
+                    </div>
+                </form>
+            </div>
 
-            <h2>Upload PGM</h2>
-            <input type="file" id="fileInput" />
-            <button id="uploadData">Generate Grid</button>
+            <div id="input-pgm">
+                <h2>PGM</h2>
+                <input type="file" id="fileInput" />
+                <button id="uploadData">Generate Grid</button>
+            </div>
+
+            <div id="input-json">
+                <h2>JSON</h2>
+                <textarea
+                    id="jsonData"
+                    rows="10"
+                    placeholder="Paste JSON data here"
+                ></textarea>
+                <button id="saveData">Generate Grid</button>
+            </div>
         </div>
 
         <script src="input.js"></script>

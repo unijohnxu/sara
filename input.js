@@ -1,3 +1,23 @@
+const saveDataButton = document.getElementById("saveData");
+const jsonDataTextarea = document.getElementById("jsonData");
+
+saveDataButton.addEventListener("click", function () {
+    const jsonData = jsonDataTextarea.value;
+    try {
+        // Try to parse the JSON to ensure it's valid
+        const parsedJson = JSON.parse(jsonData);
+        // Generate a temporary key for sessionStorage
+        const tempLayoutKey = "tempLayout";
+        // Save the valid JSON to sessionStorage
+        sessionStorage.setItem(tempLayoutKey, jsonData);
+        // Redirect to index.html with a flag indicating that a temporary layout should be loaded
+        window.location.href = `index.html?useTempLayout=true`;
+    } catch (e) {
+        alert("Invalid JSON data. Please correct it and try again.");
+        console.error("Error parsing JSON: ", e);
+    }
+});
+
 document.getElementById("uploadData").addEventListener("click", function () {
     const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];

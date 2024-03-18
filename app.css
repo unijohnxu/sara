@@ -32,12 +32,17 @@ input[type="submit"],
     align-items: center;
 }
 
-#input h2 {
-    margin-top: 20px;
+#dimensions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 #saved-layouts,
-#premade-templates {
+#premade-templates,
+#input-dimensions,
+#input-pgm,
+#input-json {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,6 +60,11 @@ input[type="submit"],
     justify-content: center;
     gap: 5px;
     width: 100%;
+}
+
+textarea {
+    resize: vertical;
+    width: 80%;
 }
 
 .layout-item button {
@@ -75,10 +85,10 @@ button:hover {
     background-color: #ccc;
 }
 
-#dimensions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+#layoutTitle,
+#roomStateLabel {
+    text-align: center;
+    margin: 10px;
 }
 
 #legend {

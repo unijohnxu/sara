@@ -1,11 +1,18 @@
 // JSON Output
 function generateGridDataJson() {
     const gridData = {
+        stacked: null,
         dimensions: { rows, columns },
         robot: null,
         stacks: [],
         obstacles: [],
     };
+
+    // Include stacked property based on room state
+    gridData.stacked =
+        document.getElementById("roomStateValue").textContent === "Unstacked"
+            ? false
+            : true;
 
     // Robot location
     const robotElement = document.querySelector(".robot-in-grid");
@@ -112,46 +119,17 @@ const sendData = () => {
         .catch((error) => {
             console.error("Error:", error);
         });
+
+    if (roomStateValue.textContent === "Stacked") {
+        roomStateValue.textContent = "Unstacked";
+        initiateRobotButton.textContent = "Initiate Robot - Stack Chairs";
+    } else {
+        roomStateValue.textContent = "Stacked";
+        initiateRobotButton.textContent = "Initiate Robot - Arrange Chairs";
+    }
+
+    // Save the updated room state in local storage under the current layout name
+    localStorage.setItem(layoutName, generateGridDataJson());
 };
 
-document.getElementById("send-json").addEventListener("click", sendData);
-
-function saveCurrentLayout() {
-    const gridDataJson = generateGridDataJson();
-
-    // Check if a layout name is provided in the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    let layoutName = urlParams.get("layoutName");
-
-    if (layoutName) {
-        // Ask the user if they want to overwrite the current layout
-        const overwrite = confirm(
-            `Do you want to overwrite the current layout '${layoutName}'?`
-        );
-        if (!overwrite) {
-            // If the user doesn't want to overwrite, prompt for a new name
-            layoutName = prompt("Enter a new name for this layout:");
-        } // If the user confirms overwrite, proceed without prompting
-    } else {
-        // If no layout name in the URL, prompt for a name
-        layoutName = prompt("Enter a name for this layout:");
-    }
-
-    if (layoutName) {
-        // Save layout in localStorage
-        localStorage.setItem(layoutName, gridDataJson);
-        alert("Layout saved successfully.");
-
-        // Optionally, update the URL to reflect the new/current layout name
-        window.history.replaceState(
-            null,
-            "",
-            `?layoutName=${encodeURIComponent(layoutName)}`
-        );
-    }
-}
-
-// Assuming there's a button in your HTML for saving the layout
-document
-    .getElementById("save-layout")
-    .addEventListener("click", saveCurrentLayout);
+initiateRobotButton.addEventListener("click", sendData);

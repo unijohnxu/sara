@@ -1,12 +1,13 @@
 let gridSize = 50; // Initial grid size in pixels
 
 // Query URL parameters
-const urlParams = new URLSearchParams(window.location.search);
+let urlParams = new URLSearchParams(window.location.search);
 let rows;
 let columns;
 const parsedRows = parseInt(urlParams.get("rows"));
 const parsedColumns = parseInt(urlParams.get("columns"));
-const layoutName = urlParams.get("layoutName");
+const useTempLayout = urlParams.get("useTempLayout");
+let layoutName = urlParams.get("layoutName");
 
 function createGrid() {
     const gridContainer = document.querySelector(".grid-container");
@@ -69,60 +70,6 @@ function createGridFromDimensions(rows, columns) {
     }
 }
 
-function updateGridCentering() {
-    // Calculate the total grid width
-    const totalGridWidth = columns * gridSize;
-    const gridContainer = document.querySelector(".grid-container");
-
-    // Check if the grid overflows the viewport width
-    if (totalGridWidth > window.innerWidth) {
-        // Grid overflows, set justify-content to flex-start
-        gridContainer.style.justifyContent = "flex-start";
-    } else {
-        // No overflow, center the grid
-        gridContainer.style.justifyContent = "center";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    clearLayout();
-    if (layoutName) {
-        const gridDataJson = localStorage.getItem(
-            decodeURIComponent(layoutName)
-        );
-        if (gridDataJson) {
-            createSavedGrid(gridDataJson);
-            highlightInaccessibleChairs();
-        } else {
-            alert("Layout not found in LocalStorage.");
-        }
-    } else {
-        // Your usual grid initialization logic
-        createGrid();
-    }
-    updateGridCentering();
-});
-
-window.addEventListener("resize", updateGridCentering);
-
-function clearLayout() {
-    const chairContainers = document.querySelectorAll(
-        ".chair-container-in-grid"
-    );
-    chairContainers.forEach((container) => container.remove());
-
-    const robots = document.querySelectorAll(".robot-in-grid");
-    robots.forEach((robot) => robot.remove());
-
-    allocatedNumbers.clear();
-    defaultRotationDegree = 0;
-    Object.keys(allocatedCNumbersByStack).forEach((key) => {
-        delete allocatedCNumbersByStack[key];
-    });
-}
-
-document.getElementById("clear-layout").addEventListener("click", clearLayout);
-
 function createSavedGrid(gridDataJson) {
     const gridData = JSON.parse(gridDataJson);
 
@@ -171,4 +118,52 @@ function createSavedGrid(gridDataJson) {
         );
         obstacleGridItem.classList.add("black");
     });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    clearLayout();
+    if (layoutName) {
+        const gridDataJson = localStorage.getItem(
+            decodeURIComponent(layoutName)
+        );
+        if (gridDataJson) {
+            createSavedGrid(gridDataJson);
+            highlightInaccessibleChairs();
+        } else {
+            alert("Layout not found in LocalStorage.");
+            createGrid();
+        }
+    } else if (useTempLayout === "true") {
+        // Retrieve the temporary layout from sessionStorage
+        const tempLayoutJson = sessionStorage.getItem("tempLayout");
+        if (tempLayoutJson) {
+            createSavedGrid(tempLayoutJson);
+            // Optionally, clear the temporary layout from sessionStorage after use
+            sessionStorage.removeItem("tempLayout");
+        } else {
+            alert("No layout data found.");
+            createGrid();
+        }
+    } else {
+        // Your usual grid initialization logic
+        createGrid();
+    }
+    updateGridCentering();
+});
+
+window.addEventListener("resize", updateGridCentering);
+
+function updateGridCentering() {
+    // Calculate the total grid width
+    const totalGridWidth = columns * gridSize;
+    const gridContainer = document.querySelector(".grid-container");
+
+    // Check if the grid overflows the viewport width
+    if (totalGridWidth > window.innerWidth) {
+        // Grid overflows, set justify-content to flex-start
+        gridContainer.style.justifyContent = "flex-start";
+    } else {
+        // No overflow, center the grid
+        gridContainer.style.justifyContent = "center";
+    }
 }
