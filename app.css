@@ -63,6 +63,9 @@ button {
     border-radius: 5px;
     cursor: pointer;
     outline: none;
+}
+
+.load-button {
     display: flex;
     text-align: column;
     align-items: center;

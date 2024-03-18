@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Create Load button for the layout
                 const loadButton = document.createElement("button");
+                loadButton.classList.add("load-button");
                 loadButton.style.maxWidth = "80%";
                 loadButton.style.overflow = "hidden";
                 loadButton.style.whiteSpace = "nowrap";
