@@ -160,7 +160,6 @@ function createSavedGrid(gridDataJson) {
         });
     });
 
-    selectedStack.classList.remove("highlighted-yellow");
     document.getElementById("stack-counter").style.display = "none"; // Hide the counter
     selectedStack = null;
 
