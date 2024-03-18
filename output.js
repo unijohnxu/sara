@@ -115,3 +115,43 @@ const sendData = () => {
 };
 
 document.getElementById("send-json").addEventListener("click", sendData);
+
+function saveCurrentLayout() {
+    const gridDataJson = generateGridDataJson();
+
+    // Check if a layout name is provided in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    let layoutName = urlParams.get("layoutName");
+
+    if (layoutName) {
+        // Ask the user if they want to overwrite the current layout
+        const overwrite = confirm(
+            `Do you want to overwrite the current layout '${layoutName}'?`
+        );
+        if (!overwrite) {
+            // If the user doesn't want to overwrite, prompt for a new name
+            layoutName = prompt("Enter a new name for this layout:");
+        } // If the user confirms overwrite, proceed without prompting
+    } else {
+        // If no layout name in the URL, prompt for a name
+        layoutName = prompt("Enter a name for this layout:");
+    }
+
+    if (layoutName) {
+        // Save layout in localStorage
+        localStorage.setItem(layoutName, gridDataJson);
+        alert("Layout saved successfully.");
+
+        // Optionally, update the URL to reflect the new/current layout name
+        window.history.replaceState(
+            null,
+            "",
+            `?layoutName=${encodeURIComponent(layoutName)}`
+        );
+    }
+}
+
+// Assuming there's a button in your HTML for saving the layout
+document
+    .getElementById("save-layout")
+    .addEventListener("click", saveCurrentLayout);

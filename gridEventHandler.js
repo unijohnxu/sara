@@ -1,4 +1,4 @@
-function addStack(gridItem) {
+function addStack(gridItem, rotationDegree = defaultRotationDegree) {
     if (gridItem.querySelector(".robot-in-grid")) return; // Skip if there's a robot
     if (gridItem.classList.contains("black")) return; // Skip if there's an obstacle
 
@@ -17,8 +17,8 @@ function addStack(gridItem) {
     chairImage.src = "chair.png";
     chairImage.alt = "Chair";
     chairImage.className = "chair-in-grid";
-    chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
-    chairImage.dataset.rotation = defaultRotationDegree;
+    chairImage.style.transform = `rotate(${rotationDegree}deg)`; // Apply the default rotation degree
+    chairImage.dataset.rotation = rotationDegree;
     // chairImage.draggable = false;
 
     // Chair text
@@ -32,7 +32,7 @@ function addStack(gridItem) {
     gridItem.appendChild(container);
 }
 
-function handlePlaceMode(gridItem) {
+function handlePlaceMode(gridItem, rotationDegree = defaultRotationDegree) {
     const chairContainer = gridItem.querySelector(".chair-container-in-grid");
 
     // To not get mixed up with stacks
@@ -44,9 +44,18 @@ function handlePlaceMode(gridItem) {
             .textContent.startsWith("C");
 
     // If stack selected already and clicked grid item is not a chair
-    if (!isChairContainer && selectedStack) {
+    if (!isChairContainer) {
         if (gridItem.querySelector(".robot-in-grid")) return; // Skip if there's a robot
         if (gridItem.classList.contains("black")) return; // Skip if there's an obstacle
+
+        if (!selectedStack) {
+            alert(
+                "Select a stack (add in Stack mode) to place chairs of the selected stack."
+            );
+            isMouseDown = false; // Reset mouse down status
+            clearTimeout(holdTimeoutId);
+            return;
+        }
 
         const stackText = selectedStack.querySelector(
             ".chair-text-in-grid"
@@ -54,37 +63,20 @@ function handlePlaceMode(gridItem) {
         const cNumber = getLowestAvailableCNumber(stackText); // Get the lowest available C number for this stack
 
         if (cNumber === null) {
-            return; // Stop if the limit is reached
+            return;
         }
 
-        const container = document.createElement("div");
-        container.className = "chair-container-in-grid"; // contains both image and text
-
-        // Chair image
-        const chairImage = document.createElement("img");
-        chairImage.src = "chair.png";
-        chairImage.alt = "Chair";
-        chairImage.className = "chair-in-grid";
-        chairImage.style.transform = `rotate(${defaultRotationDegree}deg)`; // Apply the default rotation degree
-        chairImage.dataset.rotation = defaultRotationDegree;
-        // chairImage.draggable = false;
-
-        // Chair text
-        const chairText = document.createElement("span");
-        chairText.textContent = `C${cNumber} (${stackText})`;
-        chairText.className = "chair-text-in-grid";
-        chairText.style.fontSize = `${calculateFontSize(gridSize)}px`;
-
         // Add C chair associated with the selected stack
-        container.append(chairImage, chairText);
-        gridItem.appendChild(container);
+        addChair(gridItem, `C${cNumber} (${stackText})`, rotationDegree);
 
-        // If clicked grid item is a chair but not a C chair, then a stack must be clicked
+        // Update the counter display
+        updateStackCounter(stackText);
     } else if (chairContainer && !isCChair) {
-        // Interacting with a stack
+        // Selecting or deselecting a stack
         if (selectedStack === chairContainer) {
             // Deselect if the same stack is clicked again
             selectedStack.classList.remove("highlighted-yellow");
+            document.getElementById("stack-counter").style.display = "none"; // Hide the counter
             selectedStack = null;
         } else {
             // Select a new stack
@@ -92,8 +84,57 @@ function handlePlaceMode(gridItem) {
                 selectedStack.classList.remove("highlighted-yellow");
             selectedStack = chairContainer;
             chairContainer.classList.add("highlighted-yellow");
+
+            // Update the counter display
+            const stackText = selectedStack.querySelector(
+                ".chair-text-in-grid"
+            ).textContent;
+            updateStackCounter(stackText);
         }
     }
+}
+
+function addChair(
+    gridItem,
+    chairTextContent,
+    rotationDegree = defaultRotationDegree
+) {
+    const container = document.createElement("div");
+    container.className = "chair-container-in-grid"; // contains both image and text
+
+    // Chair image
+    const chairImage = document.createElement("img");
+    chairImage.src = "chair.png";
+    chairImage.alt = "Chair";
+    chairImage.className = "chair-in-grid";
+    chairImage.style.transform = `rotate(${rotationDegree}deg)`; // Apply the default rotation degree
+    chairImage.dataset.rotation = rotationDegree;
+    // chairImage.draggable = false;
+
+    // Chair text
+    const chairText = document.createElement("span");
+    chairText.textContent = chairTextContent;
+    chairText.className = "chair-text-in-grid";
+    chairText.style.fontSize = `${calculateFontSize(gridSize)}px`;
+
+    // Add chair to grid item
+    container.append(chairImage, chairText);
+    gridItem.appendChild(container);
+}
+
+function updateStackCounter(stackId) {
+    const stackCounterDiv = document.getElementById("stack-counter");
+    const stackCounterId = document.getElementById("stack");
+    const stackCounterRemainder = document.getElementById("remainder");
+
+    stackCounterId.textContent = stackId; // Set the stack ID in the counter display
+
+    // Calculate and display the number of remaining chairs for the stack
+    const currentCount = allocatedCNumbersByStack[stackId] || 0;
+    const remainingChairs = maxChairsPerStack - currentCount;
+    stackCounterRemainder.textContent = remainingChairs;
+
+    stackCounterDiv.style.display = "flex"; // Make the counter visible
 }
 
 function rotateChair(gridItem, isQuickClick) {

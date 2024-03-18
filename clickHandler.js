@@ -12,11 +12,14 @@ gridContainer.addEventListener("pointerdown", (event) => {
         isQuickClick = true;
 
         if (currentMode === "rotate") {
-            // Track the grid item under the mouse during pointerdown
             clickedGridItem = event.target.closest(".grid-item");
-
+            // Track the grid item under the mouse during pointerdown
             holdTimeoutId = setTimeout(() => {
-                if (isMouseDown && clickedGridItem === hoveredGridItem) {
+                if (
+                    isMouseDown &&
+                    clickedGridItem === hoveredGridItem &&
+                    clickedGridItem != null
+                ) {
                     // If the mouse is still down, it's a hold
                     isQuickClick = false; // Not a quick click
                     handleGridClick(event);
@@ -82,9 +85,11 @@ gridContainer.addEventListener("pointerover", (event) => {
 
     // Clear any previously shown preview chair
     const existingPreview = document.querySelector(".preview-chair-container");
-    if (existingPreview) {
-        existingPreview.remove();
-    }
+    const existingRobotPreview = document.querySelector(
+        ".preview-robot-in-grid"
+    );
+    if (existingPreview) existingPreview.remove();
+    if (existingRobotPreview) existingRobotPreview.remove();
 
     if (
         !gridItem ||
@@ -121,18 +126,28 @@ gridContainer.addEventListener("pointerover", (event) => {
             const previewChairContainer = createPreviewChair();
             gridItem.appendChild(previewChairContainer);
         }
+    } else if (currentMode === "robot") {
+        const previewRobot = document.createElement("img");
+        previewRobot.src = "robot.png";
+        previewRobot.alt = "Preview Robot";
+        previewRobot.className = "preview-robot-in-grid";
+        gridItem.appendChild(previewRobot);
     }
 });
 
 function handleGridClick(event) {
+    clickedGridItem = null;
+
     const gridItem = event.target.closest(".grid-item");
     if (!gridItem) return; // Exit if clicked object is not a grid item
 
     // Clear any previously shown preview chair
     const existingPreview = document.querySelector(".preview-chair-container");
-    if (existingPreview) {
-        existingPreview.remove();
-    }
+    const existingRobotPreview = document.querySelector(
+        ".preview-robot-in-grid"
+    );
+    if (existingPreview) existingPreview.remove();
+    if (existingRobotPreview) existingRobotPreview.remove();
 
     switch (currentMode) {
         case "stack":
@@ -175,7 +190,7 @@ function createPreviewChair(rotationDegree = defaultRotationDegree) {
 
     const previewChair = document.createElement("img");
     previewChair.src = "chair.png";
-    previewChair.alt = "Chair";
+    previewChair.alt = "Preview Chair";
     previewChair.className = "preview-chair-in-grid";
     // Apply the given rotation
     previewChair.style.transform = `rotate(${rotationDegree}deg)`;

@@ -2,17 +2,20 @@ let gridSize = 50; // Initial grid size in pixels
 
 // Query URL parameters
 const urlParams = new URLSearchParams(window.location.search);
-let rows = parseInt(urlParams.get("rows"));
-let columns = parseInt(urlParams.get("columns"));
-let dimensionsInput = false;
-if (rows && columns) dimensionsInput = true;
+let rows;
+let columns;
+const parsedRows = parseInt(urlParams.get("rows"));
+const parsedColumns = parseInt(urlParams.get("columns"));
+const layoutName = urlParams.get("layoutName");
 
 function createGrid() {
     const gridContainer = document.querySelector(".grid-container");
     gridContainer.innerHTML = ""; // Clear existing grid items
 
     // Check for query parameters first
-    if (dimensionsInput) {
+    if (parsedRows && parsedColumns) {
+        rows = parsedRows;
+        columns = parsedColumns;
         createGridFromDimensions(rows, columns);
     } else {
         fetch("http://localhost:8082/latest_grid_data")
@@ -51,7 +54,6 @@ function createGridFromData(gridData) {
             gridContainer.appendChild(gridItem);
         }
     }
-    updateGridCentering();
 }
 
 function createGridFromDimensions(rows, columns) {
@@ -65,7 +67,6 @@ function createGridFromDimensions(rows, columns) {
             gridContainer.append(gridItem);
         }
     }
-    updateGridCentering();
 }
 
 function updateGridCentering() {
@@ -84,12 +85,27 @@ function updateGridCentering() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    createGrid();
+    clearLayout();
+    if (layoutName) {
+        const gridDataJson = localStorage.getItem(
+            decodeURIComponent(layoutName)
+        );
+        if (gridDataJson) {
+            createSavedGrid(gridDataJson);
+            highlightInaccessibleChairs();
+        } else {
+            alert("Layout not found in LocalStorage.");
+        }
+    } else {
+        // Your usual grid initialization logic
+        createGrid();
+    }
+    updateGridCentering();
 });
 
 window.addEventListener("resize", updateGridCentering);
 
-document.getElementById("clear-layout").addEventListener("click", function () {
+function clearLayout() {
     const chairContainers = document.querySelectorAll(
         ".chair-container-in-grid"
     );
@@ -103,4 +119,57 @@ document.getElementById("clear-layout").addEventListener("click", function () {
     Object.keys(allocatedCNumbersByStack).forEach((key) => {
         delete allocatedCNumbersByStack[key];
     });
-});
+}
+
+document.getElementById("clear-layout").addEventListener("click", clearLayout);
+
+function createSavedGrid(gridDataJson) {
+    const gridData = JSON.parse(gridDataJson);
+
+    // Set up the grid dimensions
+    rows = gridData.dimensions.rows;
+    columns = gridData.dimensions.columns;
+    createGridFromDimensions(rows, columns);
+
+    // Place robot if present
+    if (gridData.robot) {
+        const robotLocation = gridData.robot.split("-");
+        const robotGridItem = document.getElementById(
+            `item-${robotLocation[0]}-${robotLocation[1]}`
+        );
+        addOrRemoveRobot(robotGridItem);
+    }
+
+    // Place stacks and chairs
+    gridData.stacks.forEach((stack) => {
+        const stackLocation = stack.location.split("-");
+        const stackGridItem = document.getElementById(
+            `item-${stackLocation[0]}-${stackLocation[1]}`
+        );
+        addStack(stackGridItem, stack.rotation);
+
+        selectedStack = stackGridItem;
+
+        // For each chair in the stack
+        stack.chairs.forEach((chair) => {
+            const chairLocation = chair.location.split("-");
+            const chairGridItem = document.getElementById(
+                `item-${chairLocation[0]}-${chairLocation[1]}`
+            );
+            handlePlaceMode(chairGridItem, chair.rotation);
+        });
+    });
+
+    selectedStack.classList.remove("highlighted-yellow");
+    document.getElementById("stack-counter").style.display = "none"; // Hide the counter
+    selectedStack = null;
+
+    // Place obstacles
+    gridData.obstacles.forEach((obstacle) => {
+        const obstacleLocation = obstacle.split("-");
+        const obstacleGridItem = document.getElementById(
+            `item-${obstacleLocation[0]}-${obstacleLocation[1]}`
+        );
+        obstacleGridItem.classList.add("black");
+    });
+}
