@@ -57,18 +57,18 @@ input[type="submit"],
     width: 100%;
 }
 
+.layout-item button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 button {
     background-color: white;
     border: 1px solid black;
     border-radius: 5px;
     cursor: pointer;
     outline: none;
-}
-
-.load-button {
-    display: flex;
-    text-align: column;
-    align-items: center;
 }
 
 button:hover {
