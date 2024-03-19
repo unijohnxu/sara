@@ -12,17 +12,11 @@ const modeLogos = {
 
 const keyModeMapping = {
     1: "stack",
-    S: "stack",
     2: "place",
-    P: "place",
     3: "rotate",
-    R: "rotate",
     4: "move",
-    M: "move",
     5: "delete",
-    D: "delete",
     6: "robot",
-    X: "robot",
 };
 
 document.addEventListener("keydown", function (event) {
@@ -48,6 +42,14 @@ function toggleMode(selectedMode) {
         );
     currentMode = currentMode === selectedMode ? null : selectedMode; // If selected mode is the current mode, current mode becomes nothing
     updateUIModes();
+
+    if (currentMode === null) {
+        displayLayoutData();
+    } else {
+        document
+            .querySelectorAll(".chair-in-grid")
+            .forEach((el) => el.classList.remove("grey-out"));
+    }
 
     selectedStack = null;
     selectedRotatingChair = null;

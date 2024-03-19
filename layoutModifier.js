@@ -3,32 +3,58 @@ const roomStateLabel = document.getElementById("roomStateLabel");
 const roomStateValue = document.getElementById("roomStateValue");
 const initiateRobotButton = document.getElementById("initiateRobot");
 
-displayLayoutData();
-
 function displayLayoutData() {
     urlParams = new URLSearchParams(window.location.search);
     layoutName = urlParams.get("layoutName");
 
-    // Check if there's a layout name in the URL
-    console.log;
     if (layoutName && localStorage.getItem(layoutName) != null) {
-        const layoutDataJson = localStorage.getItem(layoutName);
-        const layoutData = JSON.parse(layoutDataJson);
+        try {
+            const layoutDataJson = localStorage.getItem(layoutName);
+            const layoutData = JSON.parse(layoutDataJson);
 
-        layoutTitle.textContent = decodeURIComponent(layoutName);
-        roomStateLabel.style.display = "block";
+            layoutTitle.textContent = decodeURIComponent(layoutName);
+            roomStateLabel.style.display = "block";
 
-        // Check the 'stacked' property from the layout data to set the room state
-        if (layoutData.stacked) {
-            roomStateValue.textContent = "Stacked";
-            initiateRobotButton.textContent = "Initiate Robot - Arrange Chairs";
-        } else {
-            roomStateValue.textContent = "Unstacked";
-            initiateRobotButton.textContent = "Initiate Robot - Stack Chairs";
-        }
+            if (layoutData.stacked) {
+                roomStateValue.textContent = "Stacked";
+                initiateRobotButton.textContent =
+                    "Initiate Robot - Arrange Chairs";
+                greyOutChairs(true); // Grey out C chairs
+            } else {
+                roomStateValue.textContent = "Unstacked";
+                initiateRobotButton.textContent =
+                    "Initiate Robot - Stack Chairs";
+                greyOutChairs(false); // Grey out stacks
+            }
 
-        initiateRobotButton.classList.remove("grey-out"); // Enable the button
+            initiateRobotButton.classList.remove("grey-out");
+        } catch (e) {}
     }
+}
+
+// Function to grey out chairs based on the room state
+function greyOutChairs(isRoomStacked) {
+    const chairContainers = document.querySelectorAll(
+        ".chair-container-in-grid"
+    );
+
+    chairContainers.forEach((container) => {
+        const isCChair = container
+            .querySelector(".chair-text-in-grid")
+            .textContent.startsWith("C");
+        const chairImage = container.querySelector(".chair-in-grid");
+
+        if (isRoomStacked && isCChair) {
+            // Room is stacked, grey out C chairs
+            chairImage.classList.add("grey-out");
+        } else if (!isRoomStacked && !isCChair) {
+            // Room is unstacked, grey out stacks
+            chairImage.classList.add("grey-out");
+        } else {
+            // Otherwise, remove grey-out class
+            chairImage.classList.remove("grey-out");
+        }
+    });
 }
 
 function saveCurrentLayout() {
@@ -46,10 +72,22 @@ function saveCurrentLayout() {
         if (!overwrite) {
             // If the user doesn't want to overwrite, prompt for a new name
             layoutName = prompt("Enter a new name for this layout:");
-        } // If the user confirms overwrite, proceed without prompting
+        }
     } else {
         // If no layout name in the URL, prompt for a name
-        layoutName = prompt("Enter a name for this layout:");
+        const tempName = prompt("Enter a name for this layout:");
+
+        if (localStorage.getItem(tempName) !== null) {
+            // Prompt the user to confirm overwriting the existing layout
+            const overwrite = confirm(
+                `The layout '${tempName}' already exists. Do you want to overwrite it?`
+            );
+            if (!overwrite) {
+                // If the user chooses not to overwrite, exit the function
+                return;
+            }
+        }
+        layoutName = tempName;
     }
 
     if (layoutName) {
@@ -93,4 +131,10 @@ function clearLayout() {
     });
 }
 
-document.getElementById("clear-layout").addEventListener("click", clearLayout);
+document.getElementById("clear-layout").addEventListener("click", () => {
+    const prompt = confirm("Are you sure you want to clear the layout?");
+    if (!prompt) {
+        return;
+    }
+    clearLayout();
+});

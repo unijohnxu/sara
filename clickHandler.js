@@ -26,6 +26,7 @@ gridContainer.addEventListener("pointerdown", (event) => {
                 }
             }, 300); // Differentiate between click and hold
         } else {
+            hoveredGridItem = null;
             handleGridClick(event);
         }
     }
@@ -82,7 +83,58 @@ gridContainer.addEventListener("pointerover", (event) => {
     }
 
     // Previewing implementation
+    previewChair(hoveredGridItem);
+});
 
+function handleGridClick(event) {
+    clickedGridItem = null;
+
+    const gridItem = event.target.closest(".grid-item");
+    if (!gridItem) return; // Exit if clicked object is not a grid item
+
+    // Clear any previously shown preview chair
+    const existingPreview = document.querySelector(".preview-chair-container");
+    const existingRobotPreview = document.querySelector(
+        ".preview-robot-in-grid"
+    );
+    if (existingPreview) existingPreview.remove();
+    if (existingRobotPreview) existingRobotPreview.remove();
+
+    switch (currentMode) {
+        case "stack":
+            addStack(gridItem);
+            break;
+        case "place":
+            handlePlaceMode(gridItem);
+            break;
+        case "rotate":
+            rotateChair(gridItem, isQuickClick);
+            break;
+        case "move":
+            moveChair(gridItem);
+            break;
+        case "delete":
+            deleteChair(gridItem);
+            break;
+        case "robot":
+            addOrRemoveRobot(gridItem);
+            break;
+        default:
+            toggleHighlight(gridItem);
+            break;
+    }
+
+    lastGridItem = gridItem;
+
+    highlightInaccessibleChairs();
+}
+
+document.getElementById("rotationButton").addEventListener("click", () => {
+    const rotationRangeValue = document.getElementById("rotationRange").value;
+    defaultRotationDegree = parseInt(rotationRangeValue); // Update the default rotation degree
+});
+
+function previewChair(gridItem) {
     // Clear any previously shown preview chair
     const existingPreview = document.querySelector(".preview-chair-container");
     const existingRobotPreview = document.querySelector(
@@ -133,55 +185,7 @@ gridContainer.addEventListener("pointerover", (event) => {
         previewRobot.className = "preview-robot-in-grid";
         gridItem.appendChild(previewRobot);
     }
-});
-
-function handleGridClick(event) {
-    clickedGridItem = null;
-
-    const gridItem = event.target.closest(".grid-item");
-    if (!gridItem) return; // Exit if clicked object is not a grid item
-
-    // Clear any previously shown preview chair
-    const existingPreview = document.querySelector(".preview-chair-container");
-    const existingRobotPreview = document.querySelector(
-        ".preview-robot-in-grid"
-    );
-    if (existingPreview) existingPreview.remove();
-    if (existingRobotPreview) existingRobotPreview.remove();
-
-    switch (currentMode) {
-        case "stack":
-            addStack(gridItem);
-            break;
-        case "place":
-            handlePlaceMode(gridItem);
-            break;
-        case "rotate":
-            rotateChair(gridItem, isQuickClick);
-            break;
-        case "move":
-            moveChair(gridItem);
-            break;
-        case "delete":
-            deleteChair(gridItem);
-            break;
-        case "robot":
-            addOrRemoveRobot(gridItem);
-            break;
-        default:
-            toggleHighlight(gridItem);
-            break;
-    }
-
-    lastGridItem = gridItem;
-
-    highlightInaccessibleChairs();
 }
-
-document.getElementById("rotationButton").addEventListener("click", () => {
-    const rotationRangeValue = document.getElementById("rotationRange").value;
-    defaultRotationDegree = parseInt(rotationRangeValue); // Update the default rotation degree
-});
 
 function createPreviewChair(rotationDegree = defaultRotationDegree) {
     // Create a container for the preview chair

@@ -146,10 +146,7 @@ function rotateChair(gridItem, isQuickClick) {
 
     if (isQuickClick) {
         // For a quick click, rotate the chair image by 90 degrees immediately
-        let currentRotation = parseInt(chairImage.dataset.rotation); // Directly use dataset.rotation which should always be set
-        currentRotation = (currentRotation + 90) % 360; // Increment by 90 degrees, wrap around at 360
-        chairImage.dataset.rotation = currentRotation; // Update rotation in dataset
-        chairImage.style.transform = `rotate(${currentRotation}deg)`;
+        rotateByAngle(chairImage, 90);
     } else {
         // For holding, show the rotation control panel and highlight the chair
         if (chairContainer !== selectedRotatingChair) {
@@ -180,6 +177,86 @@ function rotateChair(gridItem, isQuickClick) {
         }
     }
 }
+
+function rotateByAngle(chairImage, angle) {
+    // Extract the current rotation angle from the transform style
+    const currentTransform = chairImage.style.transform;
+    const rotationMatch = currentTransform.match(/rotate\(([-\d.]+)deg\)/);
+    let currentRotation = rotationMatch ? parseFloat(rotationMatch[1]) : 0;
+
+    // Calculate the new display rotation, taking overflow past 360 into account
+    let newDisplayRotation = currentRotation + angle;
+
+    // Update the dataset rotation to be within the 0-360 range
+    let datasetRotation = ((newDisplayRotation % 360) + 360) % 360;
+    chairImage.dataset.rotation = datasetRotation;
+
+    // Apply the updated rotation for a smooth transition
+    chairImage.style.transform = `rotate(${newDisplayRotation}deg)`;
+
+    if (selectedRotatingChair) {
+        selectedRotatingChair.classList.remove("highlighted-yellow");
+        selectedRotatingChair = null;
+    }
+    document.getElementById("rotateControlPanel").style.display = "none";
+}
+
+document.addEventListener("keydown", function (event) {
+    const existingPreview = document.querySelector(".preview-chair-container");
+    if (currentMode === "stack" || currentMode === "place") {
+        if (!existingPreview) return;
+        switch (event.key.toLowerCase()) {
+            case "q":
+                defaultRotationDegree =
+                    (((defaultRotationDegree - 90) % 360) + 360) % 360;
+                break;
+            case "w":
+                defaultRotationDegree =
+                    (((defaultRotationDegree - 10) % 360) + 360) % 360;
+                break;
+            case "e":
+                defaultRotationDegree =
+                    (((defaultRotationDegree + 10) % 360) + 360) % 360;
+                break;
+            case "r":
+                defaultRotationDegree =
+                    (((defaultRotationDegree + 90) % 360) + 360) % 360;
+                break;
+            case "t":
+                defaultRotationDegree =
+                    (((defaultRotationDegree - 180) % 360) + 360) % 360;
+                break;
+        }
+        previewChair(hoveredGridItem);
+    } else if (currentMode === "rotate" && hoveredGridItem) {
+        const chairContainer = hoveredGridItem.querySelector(
+            ".chair-container-in-grid"
+        );
+        if (!chairContainer) return;
+
+        const chairImage = chairContainer.querySelector(".chair-in-grid");
+        if (!chairImage) return;
+
+        switch (event.key.toLowerCase()) {
+            case "q":
+                rotateByAngle(chairImage, -90);
+                break;
+            case "w":
+                rotateByAngle(chairImage, -10);
+                break;
+            case "e":
+                rotateByAngle(chairImage, 10);
+                break;
+            case "r":
+                rotateByAngle(chairImage, 90);
+                break;
+            case "t":
+                rotateByAngle(chairImage, -180);
+                break;
+        }
+        highlightInaccessibleChairs();
+    }
+});
 
 function moveChair(gridItem) {
     if (gridItem.querySelector(".robot-in-grid")) return; // Skip if there's a robot
