@@ -1,6 +1,31 @@
 let currentStep = 0; // Track the current step of the tutorial
+let touchStartX = 0;
+let touchEndX = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
+    const tutorialMainContent = document.querySelector(
+        ".tutorial-main-content"
+    );
+
+    // Listen for the start of a touch
+    tutorialMainContent.addEventListener(
+        "touchstart",
+        function (event) {
+            touchStartX = event.changedTouches[0].screenX;
+        },
+        false
+    );
+
+    // Listen for the end of a touch
+    tutorialMainContent.addEventListener(
+        "touchend",
+        function (event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe(); // Call function to handle swipe action
+        },
+        false
+    );
+
     document
         .getElementById("openTutorial")
         .addEventListener("click", toggleTutorial);
@@ -9,45 +34,60 @@ document.addEventListener("DOMContentLoaded", function () {
         .addEventListener("click", toggleTutorial);
 
     document.addEventListener("keydown", function (event) {
-        // Toggle tutorial overlay with 'i'
-        if (event.key.toLowerCase() === "x") {
-            toggleTutorial();
-        }
-
-        // Navigate tutorial steps with 'A' (left) and 'D' (right)
         if (
-            !document
+            document
                 .getElementById("tutorialOverlay")
                 .classList.contains("hidden")
         ) {
-            if (event.key.toLowerCase() === "a" || event.key === "ArrowLeft") {
-                // Move to the previous step, but not less than the first step
-                const prevStep = Math.max(currentStep - 1, 0);
-                showTutorialStep(prevStep);
-            } else if (
-                event.key.toLowerCase() === "d" ||
-                event.key === "ArrowRight"
-            ) {
-                // Move to the next step, but not beyond the last step
-                const nextStep = Math.min(
-                    currentStep + 1,
-                    tutorialData.length - 1
-                );
-                showTutorialStep(nextStep);
+            if (event.key.toLowerCase() === "x") {
+                toggleTutorial();
+            }
+        } else {
+            switch (event.key.toLowerCase()) {
+                case "x":
+                    toggleTutorial();
+                    break;
+                case "a":
+                case "arrowleft":
+                    navigateTutorial(-1); // Move to the previous step
+                    break;
+                case "d":
+                case "arrowright":
+                    navigateTutorial(1); // Move to the next step
+                    break;
             }
         }
     });
 
     createNavigationButtons();
-    showTutorialStep(currentStep); // Show the initial step or the last viewed step
+    showTutorialStep(currentStep);
 });
+
+function navigateTutorial(direction) {
+    const newIndex = currentStep + direction;
+    if (newIndex >= 0 && newIndex < tutorialData.length) {
+        showTutorialStep(newIndex);
+    }
+}
+
+// Function to determine swipe direction and take action
+function handleSwipe() {
+    // Determine the direction of the swipe
+    if (touchEndX < touchStartX) {
+        // Swipe Left - Next Step
+        navigateTutorial(1);
+    }
+    if (touchEndX > touchStartX) {
+        // Swipe Right - Previous Step
+        navigateTutorial(-1);
+    }
+}
 
 function toggleTutorial() {
     const overlay = document.getElementById("tutorialOverlay");
     overlay.classList.toggle("hidden");
-
     if (!overlay.classList.contains("hidden")) {
-        showTutorialStep(currentStep); // Show the current tutorial step when opening
+        showTutorialStep(currentStep);
     }
 }
 

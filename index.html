@@ -144,13 +144,18 @@
 
         <div id="tutorialOverlay" class="tutorial-overlay hidden">
             <div class="tutorial-content">
-                <button id="closeTutorial">X</button>
+                <div class="tutorial-header">
+                    <span id="tutorialTitle">Tutorial</span>
+                    <button id="closeTutorial">X</button>
+                </div>
+                <div class="tutorial-main-content">
+                    <div id="tutorialText"></div>
+                    <div id="tutorialImages"></div>
+                </div>
+                <hr class="tutorial-hr" />
+                <!-- Horizontal rule to separate content from navigation -->
                 <div class="tutorial-navigation" id="tutorialNavigation">
                     <!-- Number buttons will be inserted here -->
-                </div>
-                <div id="tutorialText"></div>
-                <div id="tutorialImages">
-                    <!-- Images will be inserted here -->
                 </div>
             </div>
         </div>

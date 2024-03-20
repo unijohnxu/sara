@@ -353,34 +353,9 @@ button:hover {
     z-index: 1000;
 }
 
-.tutorial-content::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
-}
-
-.hidden {
-    display: none;
-}
-
-.tutorial-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%; /* Fixed width */
-    height: 90%; /* Fixed height */
-    overflow-y: auto;
-    text-align: center;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-}
-
 #tutorialImage {
     max-width: 100%;
     margin: 20px 0;
-}
-
-#closeTutorial {
-    float: right;
-    cursor: pointer;
 }
 
 #tutorialImages {
@@ -395,7 +370,7 @@ button:hover {
 
 #tutorialText {
     max-width: 500px;
-    width: 70%;
+    width: 100%;
     margin: auto;
 }
 
@@ -408,13 +383,76 @@ button:hover {
     max-height: 60vh;
 }
 
-.tutorial-navigation {
+.tutorial-hr {
+    border-top: 1px solid #ccc; /* Style for the horizontal rule */
+    margin-top: 20px; /* Space above the horizontal rule */
+    width: 100%; /* Ensure the horizontal rule spans the full width */
+}
+
+.tutorial-overlay {
+    /* Other styles remain unchanged */
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column; /* Stack content vertically */
     justify-content: center;
 }
 
+.tutorial-content {
+    background: white;
+    padding: 10px 20px 20px; /* Top, right-left, bottom padding */
+    border-radius: 10px;
+    width: 90%; /* Fixed width */
+    height: 90%; /* Fixed height */
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure space between content and navigation */
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: center; /* Center children */
+    align-items: center;
+    position: relative; /* Needed for absolute positioning of the close button */
+    width: 100%;
+}
+
+#tutorialTitle {
+    text-align: center;
+    font-size: 1.5em; /* Adjust font size as needed */
+}
+
+#closeTutorial {
+    position: absolute; /* Position the button absolutely within the header */
+    right: 20px; /* Adjust based on your layout */
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    cursor: pointer;
+}
+
+.tutorial-main-content {
+    overflow-y: auto;
+    flex-grow: 1; /* Allow this section to take up available space */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.tutorial-main-content::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.tutorial-navigation {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    flex-shrink: 0; /* Prevent navigation from shrinking */
+}
+
 .tutorial-nav-button {
+    flex: 1; /* Equal width for all buttons */
+    max-width: 30px;
+    white-space: nowrap; /* Prevent text breaking */
     margin: 5px;
     padding: 5px 10px;
     cursor: pointer;
@@ -424,8 +462,13 @@ button:hover {
 }
 
 .tutorial-nav-button.active {
-    background-color: #007bff;
+    border-color: #048;
+    background-color: rgba(0, 68, 136, 0.7);
     color: white;
+}
+
+.hidden {
+    display: none;
 }
 
 /* For smaller screens */
