@@ -95,7 +95,7 @@ const tutorialData = [
         images: ["Tutorial_Images/5.png", "Tutorial_Images/6.png"],
     },
     {
-        text: `In <strong>Move mode</strong>, there are two ways to select chairs (press Q to switch). Both ways allow you to move the selected chairs with the buttons on the bottom, or with WASD or arrows keys on PC. In <strong>Single-Select Mode</strong>, you can select a chair and then click where it would go to.`,
+        text: `In <strong>Move mode</strong>, there are two ways to select chairs (press E to switch, Q to deselect). Both ways allow you to move the selected chairs with the buttons on the bottom, or with WASD or arrows keys on PC. In <strong>Single-Select Mode</strong>, you can select a chair and then click where it would go to.`,
         images: ["Tutorial_Images/move1.png", "Tutorial_Images/move2.png"],
     },
     {

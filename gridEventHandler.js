@@ -298,8 +298,18 @@ function moveChair(gridItem) {
 }
 
 document.addEventListener("keydown", function (event) {
-    if (currentMode === "move" && event.key.toLowerCase() === "q") {
-        toggleSelectMode();
+    if (currentMode === "move") {
+        if (event.key.toLowerCase() === "e") toggleSelectMode();
+        if (event.key.toLowerCase() === "q") {
+            // Clear any multi-selection
+            const selectedChairs = Array.from(
+                document.querySelectorAll(".highlighted-yellow")
+            );
+            selectedChairs.forEach((chair) =>
+                chair.classList.remove("highlighted-yellow")
+            );
+            selectedMovingChair = null;
+        }
     }
 });
 
