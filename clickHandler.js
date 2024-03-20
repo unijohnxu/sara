@@ -61,7 +61,7 @@ document.addEventListener("pointerup", (event) => {
 });
 
 // When mouse is held down and hovering over a grid item
-gridContainer.addEventListener("pointerover", (event) => {
+document.addEventListener("pointerover", (event) => {
     const gridItem = event.target.closest(".grid-item");
     hoveredGridItem = gridItem;
 
@@ -157,7 +157,11 @@ function previewChair(gridItem) {
     if (currentMode === "stack") {
         const previewChairContainer = createPreviewChair();
         gridItem.appendChild(previewChairContainer);
-    } else if (currentMode === "move" && selectedMovingChair) {
+    } else if (
+        currentMode === "move" &&
+        selectedMovingChair &&
+        !isMultiSelectEnabled
+    ) {
         // Get the rotation degree of the selected moving chair
         const selectedChairImage =
             selectedMovingChair.querySelector(".chair-in-grid");

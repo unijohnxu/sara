@@ -272,7 +272,8 @@ button:hover {
     position: fixed;
     bottom: 100px;
     left: 50%;
-    width: 70%;
+    width: 90%;
+    max-width: 300px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -336,7 +337,7 @@ button:hover {
 
 #tutorial {
     width: 100%;
-    margin: auto auto 170px auto;
+    margin: auto auto 250px auto;
     text-align: center;
 }
 
@@ -364,7 +365,7 @@ button:hover {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    max-width: 900px;
+    max-width: 1000px;
     margin: auto;
 }
 
@@ -383,12 +384,6 @@ button:hover {
     max-height: 60vh;
 }
 
-.tutorial-hr {
-    border-top: 1px solid #ccc; /* Style for the horizontal rule */
-    margin-top: 20px; /* Space above the horizontal rule */
-    width: 100%; /* Ensure the horizontal rule spans the full width */
-}
-
 .tutorial-overlay {
     /* Other styles remain unchanged */
     display: flex;
@@ -398,7 +393,7 @@ button:hover {
 
 .tutorial-content {
     background: white;
-    padding: 10px 20px 20px; /* Top, right-left, bottom padding */
+    padding: 10px 20px;
     border-radius: 10px;
     width: 90%; /* Fixed width */
     height: 90%; /* Fixed height */
@@ -444,9 +439,7 @@ button:hover {
 .tutorial-navigation {
     display: flex;
     justify-content: center;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
-    flex-shrink: 0; /* Prevent navigation from shrinking */
+    flex-shrink: 1;
 }
 
 .tutorial-nav-button {
@@ -492,4 +485,50 @@ button:hover {
         height: 30px;
         font-size: 1em;
     }
+}
+
+#moveControls.show {
+    display: grid;
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    margin: auto;
+    width: 90%;
+    max-width: 300px;
+    transform: translateX(-50%);
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    gap: 5px; /* Minimal gap for visual separation */
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#toggleSelectMode {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+#moveUp {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+#moveLeft {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+#moveRight {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+}
+
+#moveDown {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
 }

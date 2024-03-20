@@ -77,6 +77,8 @@ function toggleMode(selectedMode) {
 
     document.getElementById("stack-counter").style.display = "none";
     document.getElementById("rotateControlPanel").style.display = "none";
+
+    toggleMoveControls(currentMode === "move");
 }
 
 // Function for green border around mode logo, and also for which mode is active
@@ -92,4 +94,15 @@ function updateUIModes() {
                 modeLogos[deactivateMode].classList.remove("active-mode");
             });
     });
+}
+
+function toggleMoveControls(show) {
+    const moveControls = document.getElementById("moveControls");
+    if (show) {
+        moveControls.classList.add("show");
+        moveControls.classList.remove("hidden");
+    } else {
+        moveControls.classList.remove("show");
+        moveControls.classList.add("hidden");
+    }
 }

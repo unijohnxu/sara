@@ -95,7 +95,11 @@ const tutorialData = [
         images: ["Tutorial_Images/5.png", "Tutorial_Images/6.png"],
     },
     {
-        text: `In <strong>Move mode</strong>, you select a chair and then choose where the chair would go. In <strong>Delete mode</strong>, deleting a stack would also delete all the associated chairs of that stack. If <strong>no modes</strong> are activated, you can click on a chair to highlight associations where stacks are highlighted yellow and their chairs are highlighted blue.`,
+        text: `In <strong>Move mode</strong>, there are two ways to select chairs. Both ways allow you to move the selected chairs with the buttons on the bottom, or with WASD or arrows keys on PC. In <strong>Single-Select Mode</strong>, you can select a chair and then click where it would go to.`,
+        images: ["Tutorial_Images/move1.png", "Tutorial_Images/move2.png"],
+    },
+    {
+        text: `In <strong>Delete mode</strong>, deleting a stack would also delete all the associated chairs of that stack. If <strong>no modes</strong> are activated, you can click on a chair to highlight associations where stacks are highlighted yellow and their chairs are highlighted blue.`,
         images: ["Tutorial_Images/7.png"],
     },
     {
