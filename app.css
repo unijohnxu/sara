@@ -329,16 +329,29 @@ button:hover {
     margin: 0;
 }
 
+#initiateRobot {
+    width: 90%;
+    max-width: 500px;
+}
+
+#buttons-div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    margin: 20px;
+}
+
 .grid-buttons {
-    width: 25%;
     min-height: 5em;
 }
 
-#send-div {
+#grid-buttons-div {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    margin: 20px auto 20px auto;
+    justify-content: space-evenly;
+    width: 90%;
+    max-width: 500px;
 }
 
 #tutorial {

@@ -309,6 +309,15 @@ document.addEventListener("keydown", function (event) {
                 chair.classList.remove("highlighted-yellow")
             );
             selectedMovingChair = null;
+
+            const existingPreview = document.querySelector(
+                ".preview-chair-container"
+            );
+            const existingRobotPreview = document.querySelector(
+                ".preview-robot-in-grid"
+            );
+            if (existingPreview) existingPreview.remove();
+            if (existingRobotPreview) existingRobotPreview.remove();
         }
     }
 });

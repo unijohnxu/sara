@@ -138,3 +138,81 @@ document.getElementById("clear-layout").addEventListener("click", () => {
     }
     clearLayout();
 });
+
+document.getElementById("rotate-layout").addEventListener("click", () => {
+    // Generate the current layout's JSON
+    const currentLayoutJson = generateGridDataJson();
+
+    // Rotate the layout
+    const rotatedLayoutJson = rotateLayout(currentLayoutJson);
+
+    // Clear the current layout, including removing chairs, stacks, and the robot
+    clearLayout();
+
+    const gridContainer = document.querySelector(".grid-container");
+    gridContainer.innerHTML = ""; // Clear existing grid items
+
+    // Re-create the grid based on the rotated layout JSON
+    createSavedGrid(rotatedLayoutJson);
+
+    // Ensure any UI updates or additional logic that needs to run after rotating the layout
+    displayLayoutData();
+});
+
+function rotateLayout(gridDataJson) {
+    const gridData = JSON.parse(gridDataJson);
+
+    // Swap dimensions
+    const newRows = gridData.dimensions.columns;
+    const newColumns = gridData.dimensions.rows;
+
+    // Initialize new grid data with rotated dimensions and robot position
+    const newGridData = {
+        dimensions: { rows: newRows, columns: newColumns },
+        robot: gridData.robot, // Robot position remains the same
+        stacks: [],
+        obstacles: [],
+    };
+
+    // Rotate stacks and chairs
+    gridData.stacks.forEach((stack) => {
+        const [stackRow, stackColumn] = stack.location.split("-").map(Number);
+        const newStackRow = stackColumn;
+        const newStackColumn = gridData.dimensions.rows - stackRow + 1;
+        const newStackRotation = (stack.rotation + 90) % 360;
+
+        const newStack = {
+            location: `${newStackRow}-${newStackColumn}`,
+            rotation: newStackRotation,
+            chairs: [],
+        };
+
+        // Rotate chairs within the stack
+        stack.chairs.forEach((chair) => {
+            const [chairRow, chairColumn] = chair.location
+                .split("-")
+                .map(Number);
+            const newChairRow = chairColumn;
+            const newChairColumn = gridData.dimensions.rows - chairRow + 1;
+            const newChairRotation = (chair.rotation + 90) % 360;
+
+            newStack.chairs.push({
+                location: `${newChairRow}-${newChairColumn}`,
+                rotation: newChairRotation,
+            });
+        });
+
+        newGridData.stacks.push(newStack);
+    });
+
+    // Rotate obstacles
+    gridData.obstacles.forEach((obstacle) => {
+        const [obstacleRow, obstacleColumn] = obstacle.split("-").map(Number);
+        const newObstacleRow = obstacleColumn;
+        const newObstacleColumn = gridData.dimensions.rows - obstacleRow + 1;
+
+        newGridData.obstacles.push(`${newObstacleRow}-${newObstacleColumn}`);
+    });
+
+    return JSON.stringify(newGridData);
+}
