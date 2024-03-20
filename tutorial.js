@@ -107,7 +107,7 @@ const tutorialData = [
         images: ["Tutorial_Images/8.png", "Tutorial_Images/9.png"],
     },
     {
-        text: `You can access any room in the future in the <strong>'Choose Ready Rooms'</strong> page found at the navigation bar. You will also be able to rename and delete rooms, as well as have the JSON data associated with the rooms there.`,
+        text: `You can access any room in the future in the <strong>'Choose Ready Rooms'</strong> page found at the navigation bar. You will also be able to rename and delete rooms, as well as have the JSON data associated with the rooms there. Use the <strong>Template</strong> feature to automatically generate a theatre-style layout.`,
         images: ["Tutorial_Images/10.png"],
     },
 ];
