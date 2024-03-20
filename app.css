@@ -32,6 +32,11 @@ input[type="submit"],
     align-items: center;
 }
 
+#fileInput {
+    width: 100%;
+    max-width: 250px;
+}
+
 #dimensions {
     display: flex;
     flex-direction: column;
