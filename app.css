@@ -58,11 +58,12 @@ input[type="submit"],
     flex-direction: column;
     align-items: center;
     gap: 5px;
-    width: 75%;
     padding: 10px;
     margin: 10px auto;
     border: 1px solid black;
     border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
 }
 
 .layout-item {
@@ -362,7 +363,7 @@ button:hover {
 
 #tutorial {
     width: 100%;
-    margin: auto auto 250px auto;
+    margin: auto auto 200px auto;
     text-align: center;
 }
 
@@ -515,7 +516,7 @@ button:hover {
 #moveControls.show {
     display: grid;
     position: fixed;
-    bottom: 80px;
+    bottom: 90px;
     left: 50%;
     margin: auto;
     width: 90%;
