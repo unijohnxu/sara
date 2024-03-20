@@ -1,36 +1,6 @@
 let currentStep = 0; // Track the current step of the tutorial
-let touchStartX = 0;
-let touchEndX = 0;
-let touchStartY = 0;
-let touchEndY = 0;
-
-const MIN_SWIPE_DISTANCE_X = 30; // Minimum distance in pixels for a horizontal swipe to be recognized
-const MAX_SWIPE_DISTANCE_Y = 50; // Maximum vertical distance allowed to still consider the action a swipe
 
 document.addEventListener("DOMContentLoaded", function () {
-    const tutorialMainContent = document.querySelector(
-        ".tutorial-main-content"
-    );
-
-    tutorialMainContent.addEventListener(
-        "touchstart",
-        function (event) {
-            touchStartX = event.changedTouches[0].screenX;
-            touchStartY = event.changedTouches[0].screenY;
-        },
-        false
-    );
-
-    tutorialMainContent.addEventListener(
-        "touchend",
-        function (event) {
-            touchEndX = event.changedTouches[0].screenX;
-            touchEndY = event.changedTouches[0].screenY;
-            handleSwipe();
-        },
-        false
-    );
-
     document
         .getElementById("openTutorial")
         .addEventListener("click", toggleTutorial);
@@ -72,24 +42,6 @@ function navigateTutorial(direction) {
     const newIndex = currentStep + direction;
     if (newIndex >= 0 && newIndex < tutorialData.length) {
         showTutorialStep(newIndex);
-    }
-}
-
-function handleSwipe() {
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-
-    if (
-        Math.abs(deltaX) > MIN_SWIPE_DISTANCE_X &&
-        Math.abs(deltaY) < MAX_SWIPE_DISTANCE_Y
-    ) {
-        if (deltaX > 0) {
-            // Swipe Right - Previous Step
-            navigateTutorial(-1);
-        } else {
-            // Swipe Left - Next Step
-            navigateTutorial(1);
-        }
     }
 }
 
